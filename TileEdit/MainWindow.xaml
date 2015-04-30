@@ -1,0 +1,65 @@
+﻿<Window x:Class="TileEdit.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:TileEdit"
+        Title="TileMapper" Height="800" Width="1280">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="640*" />
+            <ColumnDefinition Width="250*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="150" />
+        </Grid.RowDefinitions>
+
+        <Border BorderBrush="Black" BorderThickness="1" Width="900" Height="361">
+            <ScrollViewer Width="900" Height="358" HorizontalScrollBarVisibility="Visible" Background="WhiteSmoke">
+                <StackPanel Orientation="Horizontal">
+                    <Canvas Name="LeftRuler" Width="30" Height="{Binding CanvasHeight}" HorizontalAlignment="Center"></Canvas>
+                    <StackPanel Orientation="Vertical">
+                        <Canvas Name="TopRuler" Width="{Binding CanvasWidth}" Height="20"></Canvas>
+                        <local:TileCanvas x:Name="TileGrid" Width="{Binding CanvasWidth}" Height="{Binding CanvasHeight}" Background="WhiteSmoke">
+                        </local:TileCanvas>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <ListBox Name="lstImages" ItemsSource="{Binding SpriteLibrary}" Grid.Column="1" Grid.RowSpan="2" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="lstImages_SelectionChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <WrapPanel Margin="2">
+                        <Image Source="{Binding ImageSource}" Width="32" Height="32" />
+                    </WrapPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
+        <StackPanel Orientation="Vertical" Grid.Row="1" Margin="10">
+            <StackPanel Grid.Row="1" VerticalAlignment="Top" Margin="5,5,5,5" Orientation="Horizontal">
+                <TextBlock VerticalAlignment="Center" Text="Width:" Margin="2"></TextBlock>
+                <TextBox Name="CanvasWidth" Text="{Binding CanvasWidth}" Width="40" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Top"></TextBox>
+                <Button Content="+" Click="IncreaseWidth_Click"></Button>
+                <TextBlock VerticalAlignment="Center" Text="Height:" Margin="10,2,2,2"></TextBlock>
+                <TextBox Name="CanvasHeight" Text="{Binding CanvasHeight}" Width="40" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Top"></TextBox>
+                <Button Content="+" Click="IncreaseHeight_Click"></Button>
+                <TextBlock VerticalAlignment="Center" Text="TileSize:" Margin="10,2,2,2"></TextBlock>
+                <TextBox Name="TileSize" Text="{Binding TileSize}" Width="40" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Top"></TextBox>
+            </StackPanel>
+            <TextBox Name="FilePath" Text="{Binding FilePath}" Width="Auto" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Top"></TextBox>
+            <StackPanel Grid.Row="1" VerticalAlignment="Top" Margin="0,10,0,0" Orientation="Horizontal">
+                <Button Content="Save" HorizontalAlignment="Left" Width="75" Click="Save_Click"/>
+                <Button Content="Load" HorizontalAlignment="Left" Margin="10,0,0,0" Width="75" Click="Load_Click"/>
+                <Button Content="Browse" HorizontalAlignment="Left" Margin="10,0,0,0" Width="75" Click="Browse_Click"/>
+                <Button Content="Add sprites" HorizontalAlignment="Right" Margin="10,0,0,0" Width="75" Click="AddSprites_Click"/>
+                <Button Content="Add spritesheet" HorizontalAlignment="Right" Margin="10,0,0,0" Width="90" Click="AddSpriteSheet_Click"/>
+            </StackPanel>
+        </StackPanel>
+        <TextBlock Name="Status" VerticalAlignment="Bottom" Text="Sprites loaded..." Grid.Row="1" Margin="2,2,2,2"></TextBlock>
+    </Grid>
+</Window>
