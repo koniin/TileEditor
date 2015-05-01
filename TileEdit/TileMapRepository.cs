@@ -66,6 +66,7 @@ namespace TileEdit
             StringBuilder sb = new StringBuilder();
 
             AppendHeader(sb, width, height);
+
             foreach (Sprite sprite in spriteLocations)
             {
                 WriteSpriteLine(sb, sprite, sprites.First(s => s.Name == sprite.Name).SourceRect);

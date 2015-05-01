@@ -26,6 +26,7 @@ namespace TileEdit
         TileFormViewModel model;
         private string lastFolder = null;
         private string currentMap;
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -33,6 +34,8 @@ namespace TileEdit
             model = new TileFormViewModel();
 
             model.PropertyChanged += model_PropertyChanged;
+
+            Layers.SelectedIndex = 0;
 
             this.DataContext = model;
 
@@ -235,6 +238,22 @@ namespace TileEdit
         private void About_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.MessageBox.Show("Made by Henrik Aronsson 2015", "About", MessageBoxButton.OK);
+        }
+
+        private void Layers_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            
+        }
+
+        private void BtnAddLayer_Click(object sender, RoutedEventArgs e)
+        {
+            TileGrid.AddLayer(LayerName.Text);
+            LayerName.Clear();
+        }
+
+        private void LayerName_GotFocus(object sender, RoutedEventArgs e)
+        {
+            LayerName.SelectAll();
         }
     }
 }

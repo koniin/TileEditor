@@ -57,6 +57,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Compression.cs" />
+    <Compile Include="Layer.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="ImageRepository.cs" />
     <Compile Include="TileCanvas.cs" />

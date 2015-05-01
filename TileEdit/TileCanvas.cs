@@ -25,6 +25,8 @@ namespace TileEdit
             }
         }
 
+        public ObservableCollection<Layer> Layers { get; set; }
+
         private ObservableCollection<Sprite> _Tiles;
         public ObservableCollection<Sprite> Tiles
         {
@@ -37,6 +39,8 @@ namespace TileEdit
         public TileCanvas()
         {
             _Tiles = new ObservableCollection<Sprite>();
+            Layers = new ObservableCollection<Layer>();
+            Layers.Add(new Layer { Index = 0, Name = "Main" });
         }
 
         public Sprite CurrentTile { get; set; }
@@ -78,6 +82,11 @@ namespace TileEdit
                 AddCurrentTile(e.GetPosition(this));
                 this.InvalidateVisual();
             }
+        }
+
+        public void AddLayer(string name)
+        {
+            Layers.Add(new Layer { Name = name, Index = Layers.Count() });
         }
 
         private void RemoveCurrentTile(Point position)
