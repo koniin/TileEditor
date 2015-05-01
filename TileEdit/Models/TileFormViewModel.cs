@@ -25,7 +25,7 @@ namespace TileEdit.Models
                 PropertyChanged(this, new PropertyChangedEventArgs(property));
         }
 
-        public ObservableCollection<Sprite> SpriteLibrary { get; set; }
+        public ObservableCollection<Sprite> Sprites { get; set; }
 
         private string _FilePath;
         public string FilePath
@@ -101,7 +101,7 @@ namespace TileEdit.Models
             CanvasHeight = 320;
             TileSize = 32;
 
-            SpriteLibrary = new ObservableCollection<Sprite>();
+            Sprites = new ObservableCollection<Sprite>();
             
             FilePath = Environment.CurrentDirectory + "\\tilemap.txt";
 
@@ -124,13 +124,13 @@ namespace TileEdit.Models
                 {
                     image = new BitmapImage(new Uri(filePath));
                     name = System.IO.Path.GetFileName(filePath);
-                    SpriteLibrary.Add(new Sprite
+                    Sprites.Add(new Sprite
                     {
                         Name = name,
                         FilePath = filePath
                     });
 
-                    SpriteRepository.AddImage(name, image);
+                    ImageRepository.AddImage(name, image);
                 }
                 catch (Exception e)
                 {
@@ -156,8 +156,8 @@ namespace TileEdit.Models
                     var cloneRect = new System.Drawing.Rectangle(i * 32, j * 32, 32, 32);
                     Bitmap cloneBitmap = image.Clone(cloneRect, image.PixelFormat);
                     var imageSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(cloneBitmap.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-                    SpriteRepository.AddImage(spriteName, imageSource);
-                    SpriteLibrary.Add(new Sprite
+                    ImageRepository.AddImage(spriteName, imageSource);
+                    Sprites.Add(new Sprite
                     {
                         Name = spriteName,
                         FilePath = fileName,

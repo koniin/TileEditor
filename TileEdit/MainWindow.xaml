@@ -26,7 +26,7 @@
             </ScrollViewer>
         </Border>
 
-        <ListBox Name="lstImages" ItemsSource="{Binding SpriteLibrary}" Grid.Column="1" Grid.RowSpan="2" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="lstImages_SelectionChanged">
+        <ListBox Name="lstImages" ItemsSource="{Binding Sprites}" Grid.Column="1" Grid.RowSpan="2" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="lstImages_SelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <WrapPanel Margin="2">

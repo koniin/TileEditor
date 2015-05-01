@@ -47,15 +47,7 @@ namespace TileEdit
 
             Point position = e.GetPosition(this);
             RemoveCurrentTile(position);
-        }
-
-        private void RemoveCurrentTile(Point position)
-        {
-            int x = (int)position.X;
-            int y = (int)position.Y;
-            int startX = x - (x % _TileSize);
-            int startY = y - (y % _TileSize);
-            RemoveTile(startX, startY);
+            this.InvalidateVisual();
         }
 
         protected override void OnMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
@@ -67,8 +59,34 @@ namespace TileEdit
             else
             {
                 Point position = e.GetPosition(this);
-                AddCurrentTile(position); 
+                AddCurrentTile(position);
+                this.InvalidateVisual();
             }
+        }
+
+        protected override void OnMouseLeftButtonUp(System.Windows.Input.MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonUp(e);
+        }
+
+        protected override void OnMouseMove(System.Windows.Input.MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+
+            if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+            {
+                AddCurrentTile(e.GetPosition(this));
+                this.InvalidateVisual();
+            }
+        }
+
+        private void RemoveCurrentTile(Point position)
+        {
+            int x = (int)position.X;
+            int y = (int)position.Y;
+            int startX = x - (x % _TileSize);
+            int startY = y - (y % _TileSize);
+            RemoveTile(startX, startY);
         }
 
         private void AddCurrentTile(Point position)
@@ -94,29 +112,11 @@ namespace TileEdit
                 AddTile(sprite);
         }
 
-        protected override void OnMouseLeftButtonUp(System.Windows.Input.MouseButtonEventArgs e)
-        {
-            base.OnMouseLeftButtonUp(e);
-        }
-
-        protected override void OnMouseMove(System.Windows.Input.MouseEventArgs e)
-        {
-            base.OnMouseMove(e);
-
-            if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
-            {
-                AddCurrentTile(e.GetPosition(this));
-            }
-        }
-
         public void AddTile(Sprite sprite)
         {
-            Sprite sp = Tiles.FirstOrDefault(t => t.X == sprite.X && t.Y == sprite.Y);
-            if (sp != null)
-                Tiles.Remove(sp);
+            RemoveTile(sprite.X, sprite.Y);
 
             Tiles.Add(sprite);
-            this.InvalidateVisual();
         }
 
         public void RemoveTile(int x, int y)
@@ -133,10 +133,6 @@ namespace TileEdit
 
             Pen pen = new Pen(Brushes.Black, 1);
             Rect rect = new Rect();
-            /*
-            rect.Width = _TileSize;
-            rect.Height = _TileSize;
-            */
             for (int y = 0; y < this.Height; y += _TileSize)
             {
                 for (int x = 0; x < this.Width; x += _TileSize)
@@ -156,8 +152,8 @@ namespace TileEdit
             Rect rect = new Rect();
             foreach (Sprite sprite in Tiles)
             {
-                if (SpriteRepository.Contains(sprite.Name)) {
-                    ImageSource image = SpriteRepository.GetImage(sprite.Name);
+                if (ImageRepository.Contains(sprite.Name)) {
+                    ImageSource image = ImageRepository.GetImage(sprite.Name);
                     rect.X = sprite.X;
                     rect.Y = sprite.Y;
                     rect.Height = image.Height;

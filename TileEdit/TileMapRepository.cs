@@ -37,22 +37,22 @@ namespace TileEdit
             return sprite;
         }
 
-        public static void WriteMapFile(string fileName, IList<Sprite> sprites)
+        public static void WriteMapFile(string fileName, IList<Sprite> spriteLocations, IList<Sprite> sprites)
         {
             StringBuilder sb = new StringBuilder();
 
-            foreach (Sprite sprite in sprites)
+            foreach (Sprite sprite in spriteLocations)
             {
-                WriteSpriteLine(sb, sprite);
+                WriteSpriteLine(sb, sprite, sprites.First(s => s.Name == sprite.Name).SourceRect);
                 sb.AppendLine();
             }
 
             File.WriteAllText(fileName, sb.ToString());
         }
 
-        private static void WriteSpriteLine(StringBuilder sb, Sprite sprite)
+        private static void WriteSpriteLine(StringBuilder sb, Sprite sprite, Rectangle sourceRect)
         {
-            sb.Append(string.Format("{1},{2}{0}{3}{0}{4}", COLUMNDELIMITER, sprite.X, sprite.Y, sprite.Name, RectangleToString(sprite.SourceRect)));
+            sb.Append(string.Format("{1},{2}{0}{3}{0}{4}", COLUMNDELIMITER, sprite.X, sprite.Y, sprite.Name, RectangleToString(sourceRect)));
         }
 
         private static string RectangleToString(Rectangle rect)

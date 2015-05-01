@@ -7,7 +7,7 @@ using System.Windows.Media;
 
 namespace TileEdit
 {
-    public static class SpriteRepository
+    public static class ImageRepository
     {
         private static Dictionary<string, ImageSource> Images = new Dictionary<string,ImageSource>();
 

@@ -77,7 +77,7 @@ namespace TileEdit
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            TileMapRepository.WriteMapFile(FilePath.Text, TileGrid.Tiles);
+            TileMapRepository.WriteMapFile(FilePath.Text, TileGrid.Tiles, model.Sprites);
             Status.Text = "Saved tilemap to: " + FilePath.Text;
         }
 
