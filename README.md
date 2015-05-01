@@ -7,7 +7,6 @@ Tile editor for tile based games
 # Todo:
 1. ~~Compress maps~~
 2. ~~Clear map/new map~~
-3. Specify background
-4. Specify multiple backgrounds and their speeds
-4. Multiple layers and specify type for the layer
-5. ~~Menu (like a real menu at the top)~~
+3. ~~Multiple layers~~
+4. ~~Menu (like a real menu at the top)~~
+5. Layer types (which layer is collisions)
