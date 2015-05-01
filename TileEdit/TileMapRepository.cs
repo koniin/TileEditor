@@ -13,13 +13,20 @@ namespace TileEdit
     {
         private static readonly string COLUMNDELIMITER = ";";
 
-        public static TileMap ReadMapFile(string fileName)
+        public static TileMap ReadMapFile(string fileName, bool compressed = false)
         {
-            string[] spriteLines = File.ReadAllLines(fileName);
+            IEnumerable<string> lines;
+            if (compressed)
+                lines = Compression.Decompress(fileName);
+            else 
+                lines = File.ReadAllLines(fileName);
 
-            TileMap tileMap = ReadHeader(spriteLines[0]);
+            if (lines.Count() == 0)
+                return null;
+
+            TileMap tileMap = ReadHeader(lines.First());
             List<Sprite> sprites = new List<Sprite>();
-            foreach (string line in spriteLines.Skip(1))
+            foreach (string line in lines.Skip(1))
             {
                 sprites.Add(GetSprite(line));
             }
@@ -54,7 +61,7 @@ namespace TileEdit
             return new Rectangle(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]));
         }
 
-        public static void WriteMapFile(int width, int height, string fileName, IList<Sprite> spriteLocations, IList<Sprite> sprites)
+        public static void WriteMapFile(int width, int height, string fileName, IList<Sprite> spriteLocations, IList<Sprite> sprites, bool compress = false)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -65,7 +72,11 @@ namespace TileEdit
                 sb.AppendLine();
             }
 
-            File.WriteAllText(fileName, sb.ToString());
+            if(!compress)
+                File.WriteAllText(fileName, sb.ToString());
+            else
+                Compression.Compress(fileName, sb.ToString());
+
         }
 
         private static void AppendHeader(StringBuilder sb, int width, int height)

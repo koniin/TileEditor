@@ -116,21 +116,11 @@ namespace TileEdit.Models
         {
             string[] files = Directory.GetFiles(path);
 
-            BitmapImage image;
-            string name;
             foreach (string filePath in files)
             {
                 try
                 {
-                    image = new BitmapImage(new Uri(filePath));
-                    name = System.IO.Path.GetFileName(filePath);
-                    Sprites.Add(new Sprite
-                    {
-                        Name = name,
-                        FilePath = filePath
-                    });
-
-                    ImageRepository.AddImage(name, image);
+                    LoadSheet(filePath);
                 }
                 catch (Exception e)
                 {
@@ -148,11 +138,12 @@ namespace TileEdit.Models
             int x = image.Width / 32;
             int y = image.Height / 32;
 
+            int counter = 0;
             for (int j = 0; j < y; j++)
             {
                 for (int i = 0; i < x; i++)
                 {
-                    string spriteName = name + i + j;
+                    string spriteName = name + counter;
                     var cloneRect = new System.Drawing.Rectangle(i * 32, j * 32, 32, 32);
                     Bitmap cloneBitmap = image.Clone(cloneRect, image.PixelFormat);
                     var imageSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(cloneBitmap.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
@@ -164,6 +155,7 @@ namespace TileEdit.Models
                         ImageSource = imageSource,
                         SourceRect = cloneRect
                     });
+                    counter++;
                 }
             }
         }

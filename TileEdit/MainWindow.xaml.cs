@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace TileEdit
     {
         TileFormViewModel model;
         private string lastFolder = null;
-
+        private string currentMap;
         public MainWindow()
         {
             InitializeComponent();
@@ -75,34 +76,112 @@ namespace TileEdit
             }
         }
 
+        private void New_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SaveFileDialog();
+            if (lastFolder != null)
+                dialog.InitialDirectory = lastFolder;
+            dialog.Filter = "Map Files|*.tmap|Text Files|*.txt";
+            DialogResult result = dialog.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                TileGrid.ClearTiles();
+                File.Create(dialog.FileName);
+                FilePath.Text = dialog.FileName;
+                currentMap = dialog.FileName;
+                Status.Text = "Created new tilemap in: " + dialog.FileName;
+            }
+        }
+
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            TileMapRepository.WriteMapFile(model.CanvasWidth, model.CanvasHeight, FilePath.Text, TileGrid.Tiles, model.Sprites);
+            TileMapRepository.WriteMapFile(model.CanvasWidth, model.CanvasHeight, currentMap, TileGrid.Tiles, model.Sprites);
             Status.Text = "Saved tilemap to: " + FilePath.Text;
+        }
+
+        private void SaveCompressed_Click(object sender, RoutedEventArgs e)
+        {
+            TileMapRepository.WriteMapFile(model.CanvasWidth, model.CanvasHeight, currentMap, TileGrid.Tiles, model.Sprites, true);
+            Status.Text = "Saved tilemap compressed to: " + FilePath.Text + ".gz";
+        }
+
+        private void SaveAs_Click(object sender, RoutedEventArgs e)
+        {
+            SaveAs(false);
+        }
+
+        private void SaveAsCompressed_Click(object sender, RoutedEventArgs e)
+        {
+            SaveAs(true);
+        }
+
+        private void SaveAs(bool compress)
+        {
+            var dialog = new SaveFileDialog();
+            if (lastFolder != null)
+                dialog.InitialDirectory = lastFolder;
+            dialog.Filter = "Map Files|*.tmap|Text Files|*.txt";
+            DialogResult result = dialog.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                SaveFile(dialog.FileName, compress);
+            }
+        }
+
+        private void SaveFile(string fileName, bool compress = false)
+        {
+            FilePath.Text = fileName;
+            currentMap = fileName;
+            TileMapRepository.WriteMapFile(model.CanvasWidth, model.CanvasHeight, fileName, TileGrid.Tiles, model.Sprites, compress);
+            Status.Text = "Saved tilemap to: " + fileName;
+            Settings.AddUpdateAppSettings(Settings.SpriteDirectory, System.IO.Path.GetFileName(fileName));
         }
 
         private void Load_Click(object sender, RoutedEventArgs e)
         {
-            TileMap tileMap = TileMapRepository.ReadMapFile(FilePath.Text);
-            foreach (Sprite sprite in tileMap.Tiles)
-            {
-                TileGrid.AddTile(sprite);
-            }
-
-            model.CanvasWidth = tileMap.Width;
-            model.CanvasHeight = tileMap.Height;
-
-            Status.Text = "Loaded tilemap from: " + FilePath.Text;
+            LoadTileMap(FilePath.Text);
         }
 
         private void Browse_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
-            bool? result = dialog.ShowDialog();
-            if (result.HasValue && result.Value)
+            OpenFile(false);
+        }
+
+        private void BrowseCompressed_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFile(true);
+        }
+
+        private void OpenFile(bool compressed)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            if (compressed)
+                dialog.Filter = "GZip files|*.gz";
+            DialogResult result = dialog.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK)
             {
                 FilePath.Text = dialog.FileName;
+                LoadTileMap(dialog.FileName, compressed);
             }
+        }
+
+        private void LoadTileMap(string fileName, bool compressed = false)
+        {
+            currentMap = fileName;
+            TileGrid.ClearTiles();
+
+            TileMap tileMap = TileMapRepository.ReadMapFile(fileName, compressed);
+            if (tileMap != null)
+            {
+                foreach (Sprite sprite in tileMap.Tiles)
+                {
+                    TileGrid.AddTile(sprite);
+                }
+
+                model.CanvasWidth = tileMap.Width;
+                model.CanvasHeight = tileMap.Height;
+            }
+            Status.Text = "Loaded tilemap from: " + currentMap;
         }
 
         private void AddSprites_Click(object sender, RoutedEventArgs e)
@@ -130,6 +209,7 @@ namespace TileEdit
             {
                 model.LoadSheet(dialog.FileName);
             }
+            TileGrid.InvalidateVisual();
         }
 
         private void lstImages_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -145,6 +225,16 @@ namespace TileEdit
         private void IncreaseHeight_Click(object sender, RoutedEventArgs e)
         {
             model.CanvasHeight += int.Parse(TileSize.Text);
+        }
+
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void About_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.MessageBox.Show("Made by Henrik Aronsson 2015", "About", MessageBoxButton.OK);
         }
     }
 }

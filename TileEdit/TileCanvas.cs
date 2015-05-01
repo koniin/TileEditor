@@ -162,5 +162,11 @@ namespace TileEdit
                 }
             }
         }
+
+        internal void ClearTiles()
+        {
+            Tiles.Clear();
+            this.InvalidateVisual();
+        }
     }
 }

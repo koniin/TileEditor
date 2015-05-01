@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:TileEdit"
         Title="TileMapper" Height="800" Width="1280">
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="640*" />
@@ -13,6 +14,29 @@
             <RowDefinition Height="150" />
         </Grid.RowDefinitions>
 
+        <Menu IsMainMenu="True" Name="mainMenu" VerticalAlignment="Top" >
+            <MenuItem Header="_File ">
+                <MenuItem Header="_New..." Click="New_Click" />
+                <Separator />
+                <MenuItem Header="_Open..." Click="Browse_Click" />
+                <MenuItem Header="_Open Compressed..." Click="BrowseCompressed_Click" />
+                <MenuItem Header="_Reload..." Click="Load_Click" />
+                <Separator />
+                <MenuItem Header="_Save" Click="Save_Click" />
+                <MenuItem Header="_Save Compressed" Click="SaveCompressed_Click" />
+                <MenuItem Header="_Save As..." Click="SaveAs_Click" />
+                <MenuItem Header="_Save As Compressed..." Click="SaveAsCompressed_Click" />
+                <Separator />
+                <MenuItem Header="_Exit" Click="Exit_Click"/>
+            </MenuItem>
+            <MenuItem Header="_Sprites ">
+                <MenuItem Header="_Load all from folder" Click="AddSprites_Click" />
+                <MenuItem Header="_Load single sheet" Click="AddSpriteSheet_Click" />
+            </MenuItem>
+            <MenuItem Header="_Help ">
+                <MenuItem Header="_About" Click="About_Click" />
+            </MenuItem>
+        </Menu>
         <Border BorderBrush="Black" BorderThickness="1" Width="900" Height="361">
             <ScrollViewer Width="900" Height="358" HorizontalScrollBarVisibility="Visible" Background="WhiteSmoke">
                 <StackPanel Orientation="Horizontal">
@@ -52,13 +76,6 @@
                 <TextBox Name="TileSize" Text="{Binding TileSize}" Width="40" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Top"></TextBox>
             </StackPanel>
             <TextBox Name="FilePath" Text="{Binding FilePath}" Width="Auto" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Top"></TextBox>
-            <StackPanel Grid.Row="1" VerticalAlignment="Top" Margin="0,10,0,0" Orientation="Horizontal">
-                <Button Content="Save" HorizontalAlignment="Left" Width="75" Click="Save_Click"/>
-                <Button Content="Load" HorizontalAlignment="Left" Margin="10,0,0,0" Width="75" Click="Load_Click"/>
-                <Button Content="Browse" HorizontalAlignment="Left" Margin="10,0,0,0" Width="75" Click="Browse_Click"/>
-                <Button Content="Add sprites" HorizontalAlignment="Right" Margin="10,0,0,0" Width="75" Click="AddSprites_Click"/>
-                <Button Content="Add spritesheet" HorizontalAlignment="Right" Margin="10,0,0,0" Width="90" Click="AddSpriteSheet_Click"/>
-            </StackPanel>
         </StackPanel>
         <TextBlock Name="Status" VerticalAlignment="Bottom" Text="Sprites loaded..." Grid.Row="1" Margin="2,2,2,2"></TextBlock>
     </Grid>
