@@ -44,6 +44,40 @@ namespace TileEdit.Models
             }
         }
 
+        private int _CanvasViewHeight;
+        public int CanvasViewHeight
+        {
+            get
+            {
+                return _CanvasViewHeight;
+            }
+            set
+            {
+                if (value != _CanvasViewHeight)
+                {
+                    _CanvasViewHeight = value;
+                    NotifiyPropertyChanged("CanvasViewHeight");
+                }
+            }
+        }
+
+        private int _CanvasViewWidth;
+        public int CanvasViewWidth
+        {
+            get
+            {
+                return _CanvasViewWidth;
+            }
+            set
+            {
+                if (value != _CanvasViewWidth)
+                {
+                    _CanvasViewWidth = value;
+                    NotifiyPropertyChanged("CanvasViewWidth");
+                }
+            }
+        }
+
         private int _CanvasWidth;
         public int CanvasWidth
         {
@@ -99,16 +133,35 @@ namespace TileEdit.Models
         {
             CanvasWidth = 640;
             CanvasHeight = 320;
+            CanvasViewHeight = 358;
+            CanvasViewWidth = 900;
             TileSize = 32;
 
             Sprites = new ObservableCollection<Sprite>();
             
             FilePath = Environment.CurrentDirectory + "\\tilemap.txt";
 
+            PropertyChanged += TileFormViewModel_PropertyChanged;
+
             string settingsDir = Settings.GetSetting(Settings.SpriteDirectory);
             if (settingsDir != null)
             {
                 LoadFiles(settingsDir);
+            }
+        }
+
+        void TileFormViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "CanvasHeight")
+            {
+                CanvasViewHeight = Math.Min(570, CanvasHeight + TileSize + 10);
+                    // 358
+            } 
+            else if(e.PropertyName == "CanvasWidth")
+            {
+                CanvasViewWidth = Math.Min(900, CanvasWidth + 60);
+
+                // 900
             }
         }
 
@@ -131,9 +184,18 @@ namespace TileEdit.Models
 
         public void LoadSheet(string fileName)
         {
-            Bitmap image = new Bitmap(fileName);
-            string name = System.IO.Path.GetFileName(fileName);
+            Bitmap image;
+            try
+            {
+                image = new Bitmap(fileName);
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message, "Error loading image");
+                return;
+            }
 
+            string name = System.IO.Path.GetFileName(fileName);
 
             int x = image.Width / 32;
             int y = image.Height / 32;

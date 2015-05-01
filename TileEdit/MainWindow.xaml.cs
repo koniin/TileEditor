@@ -246,14 +246,9 @@ namespace TileEdit
 
         private void About_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.MessageBox.Show("Made by Henrik Aronsson 2015", "About", MessageBoxButton.OK);
+            System.Windows.MessageBox.Show("Made by Henrik Aronsson - 2015", "About", MessageBoxButton.OK);
         }
-
-        private void Layers_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            
-        }
-
+        
         private void BtnAddLayer_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(LayerName.Text))

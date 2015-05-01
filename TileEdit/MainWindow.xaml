@@ -37,15 +37,9 @@
                 <MenuItem Header="_About" Click="About_Click" />
             </MenuItem>
         </Menu>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,40,0,0">
-            <ComboBox Name="Layers" VerticalAlignment="Top" Width="120" SelectionChanged="Layers_SelectionChanged" ItemsSource="{Binding Layers, ElementName=TileGrid}" 
-                DisplayMemberPath="Name" SelectedIndex="{Binding SelectedLayer, ElementName=TileGrid}">
-            </ComboBox>
-            <Button Name="BtnAddLayer" Width="100" Height="20" Margin="10,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Click="BtnAddLayer_Click">Add Layer</Button>
-            <TextBox Name="LayerName" Text="New Layer" HorizontalAlignment="Left" Height="20" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotMouseCapture="LayerName_GotFocus" />
-        </StackPanel>
-        <Border BorderBrush="Black" BorderThickness="1" Width="900" Height="361">
-            <ScrollViewer Width="900" Height="358" HorizontalScrollBarVisibility="Visible" Background="WhiteSmoke">
+        
+        <Border VerticalAlignment="Center" BorderBrush="Black" BorderThickness="1" Width="{Binding CanvasViewWidth}" Height="{Binding CanvasViewHeight}">
+            <ScrollViewer Width="{Binding CanvasViewWidth}" Height="{Binding CanvasViewHeight}" HorizontalScrollBarVisibility="Visible" Background="WhiteSmoke">
                 <StackPanel Orientation="Horizontal">
                     <Canvas Name="LeftRuler" Width="30" Height="{Binding CanvasHeight}" HorizontalAlignment="Center"></Canvas>
                     <StackPanel Orientation="Vertical">
@@ -83,6 +77,13 @@
                 <TextBox Name="TileSize" Text="{Binding TileSize}" Width="40" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Top"></TextBox>
             </StackPanel>
             <TextBox Name="FilePath" Text="{Binding FilePath}" Width="Auto" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Top"></TextBox>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,40,0,0">
+                <ComboBox Name="Layers" VerticalAlignment="Top" Width="120" ItemsSource="{Binding Layers, ElementName=TileGrid}" 
+                DisplayMemberPath="Name" SelectedIndex="{Binding SelectedLayer, ElementName=TileGrid}">
+                </ComboBox>
+                <Button Name="BtnAddLayer" Width="100" Height="20" Margin="10,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Click="BtnAddLayer_Click">Add Layer</Button>
+                <TextBox Name="LayerName" Text="New Layer" HorizontalAlignment="Left" Height="20" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotMouseCapture="LayerName_GotFocus" />
+            </StackPanel>
         </StackPanel>
         <TextBlock Name="Status" VerticalAlignment="Bottom" Text="Sprites loaded..." Grid.Row="1" Margin="2,2,2,2"></TextBlock>
     </Grid>
