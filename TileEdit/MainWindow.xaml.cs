@@ -77,23 +77,20 @@ namespace TileEdit
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            TileMapRepository.WriteMapFile(FilePath.Text, TileGrid.Tiles, model.Sprites);
+            TileMapRepository.WriteMapFile(model.CanvasWidth, model.CanvasHeight, FilePath.Text, TileGrid.Tiles, model.Sprites);
             Status.Text = "Saved tilemap to: " + FilePath.Text;
         }
 
         private void Load_Click(object sender, RoutedEventArgs e)
         {
-            int highestX= 0, highestY = 0;
-            IList<Sprite> tiles = TileMapRepository.ReadMapFile(FilePath.Text);
-            foreach (Sprite sprite in tiles)
+            TileMap tileMap = TileMapRepository.ReadMapFile(FilePath.Text);
+            foreach (Sprite sprite in tileMap.Tiles)
             {
-                highestX = Math.Max(sprite.X, highestX);
-                highestY = Math.Max(sprite.Y, highestY);
                 TileGrid.AddTile(sprite);
             }
 
-            model.CanvasWidth = highestX + model.TileSize;
-            model.CanvasHeight = highestY + model.TileSize;
+            model.CanvasWidth = tileMap.Width;
+            model.CanvasHeight = tileMap.Height;
 
             Status.Text = "Loaded tilemap from: " + FilePath.Text;
         }

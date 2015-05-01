@@ -11,19 +11,29 @@ namespace TileEdit
 {
     public static class TileMapRepository
     {
-        public static IList<Sprite> ReadMapFile(string fileName)
+        private static readonly string COLUMNDELIMITER = ";";
+
+        public static TileMap ReadMapFile(string fileName)
         {
             string[] spriteLines = File.ReadAllLines(fileName);
 
+            TileMap tileMap = ReadHeader(spriteLines[0]);
             List<Sprite> sprites = new List<Sprite>();
-            foreach (string line in spriteLines)
+            foreach (string line in spriteLines.Skip(1))
             {
                 sprites.Add(GetSprite(line));
             }
-            return sprites;
+
+            tileMap.AddTiles(sprites);
+            return tileMap;
         }
 
-        private static readonly string COLUMNDELIMITER = ";";
+        private static TileMap ReadHeader(string header)
+        {
+            string[] parts = header.Split(',');
+            TileMap t = new TileMap(int.Parse(parts[0]), int.Parse(parts[1]));
+            return t;
+        }
 
         private static Sprite GetSprite(string line)
         {
@@ -31,16 +41,24 @@ namespace TileEdit
 
             string[] values = line.Split(COLUMNDELIMITER.ToCharArray());
 
-            sprite.Name = values[0];
-            sprite.X = int.Parse(values[1]);
-            sprite.Y = int.Parse(values[2]);
+            sprite.X = int.Parse(values[0].Split(',')[0]);
+            sprite.Y = int.Parse(values[0].Split(',')[1]);
+            sprite.Name = values[1];
+            sprite.SourceRect = StringToRectangle(values[2]);
             return sprite;
         }
 
-        public static void WriteMapFile(string fileName, IList<Sprite> spriteLocations, IList<Sprite> sprites)
+        private static Rectangle StringToRectangle(string rectangle)
+        {
+            string[] values = rectangle.Split(',');
+            return new Rectangle(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]));
+        }
+
+        public static void WriteMapFile(int width, int height, string fileName, IList<Sprite> spriteLocations, IList<Sprite> sprites)
         {
             StringBuilder sb = new StringBuilder();
 
+            AppendHeader(sb, width, height);
             foreach (Sprite sprite in spriteLocations)
             {
                 WriteSpriteLine(sb, sprite, sprites.First(s => s.Name == sprite.Name).SourceRect);
@@ -48,6 +66,11 @@ namespace TileEdit
             }
 
             File.WriteAllText(fileName, sb.ToString());
+        }
+
+        private static void AppendHeader(StringBuilder sb, int width, int height)
+        {
+            sb.AppendLine(string.Format("{0},{1}", width, height));
         }
 
         private static void WriteSpriteLine(StringBuilder sb, Sprite sprite, Rectangle sourceRect)

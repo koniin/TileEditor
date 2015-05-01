@@ -59,6 +59,7 @@
     <Compile Include="Settings.cs" />
     <Compile Include="ImageRepository.cs" />
     <Compile Include="TileCanvas.cs" />
+    <Compile Include="TileMap.cs" />
     <Compile Include="TileMapRepository.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
