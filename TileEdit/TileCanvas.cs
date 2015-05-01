@@ -100,7 +100,7 @@ namespace TileEdit
             }
         }
 
-        public void AddLayer(string name)
+        public void AddNewLayer(string name)
         {
             Layers.Add(new Layer { Name = name, Index = Layers.Count() });
         }
@@ -199,9 +199,8 @@ namespace TileEdit
 
         internal void ClearTiles()
         {
-            throw new NotImplementedException();
-            //Tiles.Clear();
-            //this.InvalidateVisual();
+            Layers.Clear();
+            this.InvalidateVisual();
         }
     }
 }

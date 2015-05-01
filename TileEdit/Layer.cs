@@ -22,6 +22,12 @@ namespace TileEdit
         {
             Name = name;
             Index = index;
+            Tiles = new List<Sprite>();
+        }
+        
+        public string Serialize()
+        {
+            return Name + "," + Index;
         }
     }
 }

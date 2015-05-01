@@ -13,6 +13,12 @@ namespace TileEdit
     {
         private static readonly string COLUMNDELIMITER = ";";
 
+        private struct LayerInfo
+        {
+            public string Name;
+            public int Index;
+        }
+
         public static TileMap ReadMapFile(string fileName, bool compressed = false)
         {
             IEnumerable<string> lines;
@@ -28,11 +34,27 @@ namespace TileEdit
             List<Sprite> sprites = new List<Sprite>();
             foreach (string line in lines.Skip(1))
             {
-                sprites.Add(GetSprite(line));
+                LayerInfo layerInfo = GetLayerInfo(line);
+                if (!tileMap.Layers.Any(l => l.Name == layerInfo.Name))
+                    tileMap.Layers.Add(new Layer(layerInfo.Name, layerInfo.Index));
+
+                var layer = tileMap.Layers.First(l => l.Name == layerInfo.Name);
+                layer.Tiles.Add(GetSprite(line));
             }
 
-            tileMap.AddTiles(sprites);
             return tileMap;
+        }
+
+        private static LayerInfo GetLayerInfo(string line)
+        {
+            string[] values = line.Split(COLUMNDELIMITER.ToCharArray());
+            string[] info = values[0].Split(',');
+
+            return new LayerInfo
+            {
+                Name = info[0],
+                Index = int.Parse(info[1])
+            };
         }
 
         private static TileMap ReadHeader(string header)
@@ -48,10 +70,10 @@ namespace TileEdit
 
             string[] values = line.Split(COLUMNDELIMITER.ToCharArray());
 
-            sprite.X = int.Parse(values[0].Split(',')[0]);
-            sprite.Y = int.Parse(values[0].Split(',')[1]);
-            sprite.Name = values[1];
-            sprite.SourceRect = StringToRectangle(values[2]);
+            sprite.X = int.Parse(values[1].Split(',')[0]);
+            sprite.Y = int.Parse(values[1].Split(',')[1]);
+            sprite.Name = values[2];
+            sprite.SourceRect = StringToRectangle(values[3]);
             return sprite;
         }
 
@@ -63,22 +85,22 @@ namespace TileEdit
 
         public static void WriteMapFile(int width, int height, string fileName, IList<Layer> layers, IList<Sprite> sprites, bool compress = false)
         {
-            throw new NotImplementedException();
-            //StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
 
-            //AppendHeader(sb, width, height);
+            AppendHeader(sb, width, height);
 
-            //foreach (Sprite sprite in layers[0].Tiles)
-            //{
-            //    WriteSpriteLine(sb, sprite, sprites.First(s => s.Name == sprite.Name).SourceRect);
-            //    sb.AppendLine();
-            //}
+            foreach (Layer layer in layers)
+            {
+                foreach (Sprite sprite in layer.Tiles)
+                {
+                    WriteSpriteLine(sb, layer, sprite, sprites.First(s => s.Name == sprite.Name).SourceRect);
+                }
+            }
 
-            //if(!compress)
-            //    File.WriteAllText(fileName, sb.ToString());
-            //else
-            //    Compression.Compress(fileName, sb.ToString());
-
+            if(!compress)
+                File.WriteAllText(fileName, sb.ToString());
+            else
+                Compression.Compress(fileName, sb.ToString());
         }
 
         private static void AppendHeader(StringBuilder sb, int width, int height)
@@ -86,9 +108,9 @@ namespace TileEdit
             sb.AppendLine(string.Format("{0},{1}", width, height));
         }
 
-        private static void WriteSpriteLine(StringBuilder sb, Sprite sprite, Rectangle sourceRect)
+        private static void WriteSpriteLine(StringBuilder sb, Layer layer, Sprite sprite, Rectangle sourceRect)
         {
-            sb.Append(string.Format("{1},{2}{0}{3}{0}{4}", COLUMNDELIMITER, sprite.X, sprite.Y, sprite.Name, RectangleToString(sourceRect)));
+            sb.AppendLine(string.Format("{1}{0}{2},{3}{0}{4}{0}{5}", COLUMNDELIMITER, layer.Serialize(), sprite.X, sprite.Y, sprite.Name, RectangleToString(sourceRect)));
         }
 
         private static string RectangleToString(Rectangle rect)

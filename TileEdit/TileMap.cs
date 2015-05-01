@@ -11,17 +11,24 @@ namespace TileEdit
     {
         public int Width { get; private set; }
         public int Height { get; private set; }
-        public IList<Sprite> Tiles { get; private set; }
+        public IList<Layer> Layers { get; private set; }
 
         public TileMap(int width, int height)
         {
             Width = width;
             Height = height;
+            Layers = new List<Layer>();
         }
 
-        public void AddTiles(IList<Sprite> tiles)
+        public void AddLayer(Layer layer)
         {
-            Tiles = tiles;
+            Layers.Add(layer);
+        }
+
+        public void AddSprite(string layerName, Sprite sprite)
+        {
+            Layer layer = Layers.First(l => l.Name == layerName);
+            layer.Tiles.Add(sprite);
         }
     }
 }

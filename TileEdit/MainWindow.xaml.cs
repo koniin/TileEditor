@@ -98,7 +98,12 @@ namespace TileEdit
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            SaveFile(currentMap);
+            if (string.IsNullOrWhiteSpace(currentMap))
+            {
+                SaveAs_Click(sender, e);
+            }
+            else
+                SaveFile(currentMap);
         }
 
         private void SaveCompressed_Click(object sender, RoutedEventArgs e)
@@ -175,15 +180,20 @@ namespace TileEdit
             TileMap tileMap = TileMapRepository.ReadMapFile(fileName, compressed);
             if (tileMap != null)
             {
-                foreach (Sprite sprite in tileMap.Tiles)
+                foreach (var layer in tileMap.Layers)
                 {
-                    TileGrid.AddTile(sprite);
+                    TileGrid.Layers.Add(layer);
                 }
 
                 model.CanvasWidth = tileMap.Width;
                 model.CanvasHeight = tileMap.Height;
+                Status.Text = "Loaded tilemap from: " + currentMap;
+                TileGrid.SelectedLayer = 0;
             }
-            Status.Text = "Loaded tilemap from: " + currentMap;
+            else
+            {
+                Status.Text = "Tilemap load failed: " + currentMap;
+            }
         }
 
         private void AddSprites_Click(object sender, RoutedEventArgs e)
@@ -252,7 +262,7 @@ namespace TileEdit
                 return;
             }
 
-            TileGrid.AddLayer(LayerName.Text);
+            TileGrid.AddNewLayer(LayerName.Text);
             LayerName.Clear();
         }
 
