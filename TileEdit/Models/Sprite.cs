@@ -14,5 +14,6 @@ namespace TileEdit.Models
         public int X { get; set; }
         public int Y { get; set; }
         public ImageSource ImageSource { get; set; }
+        public System.Drawing.Rectangle SourceRect { get; set; }
     }
 }

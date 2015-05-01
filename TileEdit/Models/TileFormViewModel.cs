@@ -161,7 +161,8 @@ namespace TileEdit.Models
                     {
                         Name = spriteName,
                         FilePath = fileName,
-                        ImageSource = imageSource
+                        ImageSource = imageSource,
+                        SourceRect = cloneRect
                     });
                 }
             }

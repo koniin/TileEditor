@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -51,7 +52,14 @@ namespace TileEdit
 
         private static void WriteSpriteLine(StringBuilder sb, Sprite sprite)
         {
-            sb.Append(string.Format("{1},{2}{0}{3}", COLUMNDELIMITER, sprite.X, sprite.Y, sprite.Name ));
+            sb.Append(string.Format("{1},{2}{0}{3}{0}{4}", COLUMNDELIMITER, sprite.X, sprite.Y, sprite.Name, RectangleToString(sprite.SourceRect)));
+        }
+
+        private static string RectangleToString(Rectangle rect)
+        {
+            if (rect != null)
+                return string.Format("{0},{1},{2},{3}", rect.X, rect.Y, rect.Width, rect.Height);
+            return string.Empty;
         }
     }
 }

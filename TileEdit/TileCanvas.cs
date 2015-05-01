@@ -55,6 +55,7 @@ namespace TileEdit
             int y = (int)position.Y;
             int startX = x - (x % _TileSize);
             int startY = y - (y % _TileSize);
+            RemoveTile(startX, startY);
         }
 
         protected override void OnMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
@@ -120,7 +121,7 @@ namespace TileEdit
 
         public void RemoveTile(int x, int y)
         {
-            Sprite sp = Tiles.FirstOrDefault(t => t.X == x && t.Y == x);
+            Sprite sp = Tiles.FirstOrDefault(t => t.X == x && t.Y == y);
             if (sp != null)
                 Tiles.Remove(sp);
             this.InvalidateVisual();
