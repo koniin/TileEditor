@@ -7,11 +7,20 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using TileEdit.Models;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace TileEdit
 {
-    public class TileCanvas : Canvas
+    public class TileCanvas : Canvas, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifiyPropertyChanged(string property)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(property));
+        }
+
         private int _TileSize = 32;
         public int TileSize
         {
@@ -25,20 +34,27 @@ namespace TileEdit
             }
         }
 
-        public ObservableCollection<Layer> Layers { get; set; }
-
-        private ObservableCollection<Sprite> _Tiles;
-        public ObservableCollection<Sprite> Tiles
+        private int _SelectedLayer;
+        public int SelectedLayer
         {
             get
             {
-                return _Tiles;
+                return _SelectedLayer;
+            }
+            set
+            {
+                if (value != _SelectedLayer)
+                {
+                    _SelectedLayer = value;
+                    NotifiyPropertyChanged("SelectedLayer");
+                }
             }
         }
 
+        public ObservableCollection<Layer> Layers { get; set; }
+
         public TileCanvas()
         {
-            _Tiles = new ObservableCollection<Sprite>();
             Layers = new ObservableCollection<Layer>();
             Layers.Add(new Layer { Index = 0, Name = "Main" });
         }
@@ -125,14 +141,14 @@ namespace TileEdit
         {
             RemoveTile(sprite.X, sprite.Y);
 
-            Tiles.Add(sprite);
+            Layers[_SelectedLayer].Tiles.Add(sprite);
         }
 
         public void RemoveTile(int x, int y)
         {
-            Sprite sp = Tiles.FirstOrDefault(t => t.X == x && t.Y == y);
+            Sprite sp = Layers[_SelectedLayer].Tiles.FirstOrDefault(t => t.X == x && t.Y == y);
             if (sp != null)
-                Tiles.Remove(sp);
+                Layers[_SelectedLayer].Tiles.Remove(sp);
             this.InvalidateVisual();
         }
 
@@ -159,23 +175,33 @@ namespace TileEdit
         protected void RenderTiles(System.Windows.Media.DrawingContext dc)
         {
             Rect rect = new Rect();
-            foreach (Sprite sprite in Tiles)
+            double opacityIncrement = 1.0f / Layers.Count;
+            double opacity = opacityIncrement;
+            foreach (Layer layer in Layers)
             {
-                if (ImageRepository.Contains(sprite.Name)) {
-                    ImageSource image = ImageRepository.GetImage(sprite.Name);
-                    rect.X = sprite.X;
-                    rect.Y = sprite.Y;
-                    rect.Height = image.Height;
-                    rect.Width = image.Width;
-                    dc.DrawImage(image, rect);
+                dc.PushOpacity(opacity);
+                foreach (Sprite sprite in layer.Tiles)
+                {
+                    if (ImageRepository.Contains(sprite.Name))
+                    {
+                        ImageSource image = ImageRepository.GetImage(sprite.Name);
+                        rect.X = sprite.X;
+                        rect.Y = sprite.Y;
+                        rect.Height = image.Height;
+                        rect.Width = image.Width;
+                        dc.DrawImage(image, rect);
+                    }
                 }
+                dc.Pop();
+                opacity += opacityIncrement;
             }
         }
 
         internal void ClearTiles()
         {
-            Tiles.Clear();
-            this.InvalidateVisual();
+            throw new NotImplementedException();
+            //Tiles.Clear();
+            //this.InvalidateVisual();
         }
     }
 }

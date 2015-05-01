@@ -11,6 +11,17 @@ namespace TileEdit
     {
         public string Name { get; set; }
         public int Index { get; set; }
-        public IEnumerable<Sprite> Tiles { get; set; }
+        public List<Sprite> Tiles { get; set; }
+
+        public Layer()
+        {
+            Tiles = new List<Sprite>();
+        }
+
+        public Layer(string name, int index) : base()
+        {
+            Name = name;
+            Index = index;
+        }
     }
 }

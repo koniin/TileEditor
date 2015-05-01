@@ -39,7 +39,7 @@
         </Menu>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,40,0,0">
             <ComboBox Name="Layers" VerticalAlignment="Top" Width="120" SelectionChanged="Layers_SelectionChanged" ItemsSource="{Binding Layers, ElementName=TileGrid}" 
-                DisplayMemberPath="Name">
+                DisplayMemberPath="Name" SelectedIndex="{Binding SelectedLayer, ElementName=TileGrid}">
             </ComboBox>
             <Button Name="BtnAddLayer" Width="100" Height="20" Margin="10,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Click="BtnAddLayer_Click">Add Layer</Button>
             <TextBox Name="LayerName" Text="New Layer" HorizontalAlignment="Left" Height="20" Margin="10,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" GotMouseCapture="LayerName_GotFocus" />

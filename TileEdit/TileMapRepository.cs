@@ -61,22 +61,23 @@ namespace TileEdit
             return new Rectangle(int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]), int.Parse(values[3]));
         }
 
-        public static void WriteMapFile(int width, int height, string fileName, IList<Sprite> spriteLocations, IList<Sprite> sprites, bool compress = false)
+        public static void WriteMapFile(int width, int height, string fileName, IList<Layer> layers, IList<Sprite> sprites, bool compress = false)
         {
-            StringBuilder sb = new StringBuilder();
+            throw new NotImplementedException();
+            //StringBuilder sb = new StringBuilder();
 
-            AppendHeader(sb, width, height);
+            //AppendHeader(sb, width, height);
 
-            foreach (Sprite sprite in spriteLocations)
-            {
-                WriteSpriteLine(sb, sprite, sprites.First(s => s.Name == sprite.Name).SourceRect);
-                sb.AppendLine();
-            }
+            //foreach (Sprite sprite in layers[0].Tiles)
+            //{
+            //    WriteSpriteLine(sb, sprite, sprites.First(s => s.Name == sprite.Name).SourceRect);
+            //    sb.AppendLine();
+            //}
 
-            if(!compress)
-                File.WriteAllText(fileName, sb.ToString());
-            else
-                Compression.Compress(fileName, sb.ToString());
+            //if(!compress)
+            //    File.WriteAllText(fileName, sb.ToString());
+            //else
+            //    Compression.Compress(fileName, sb.ToString());
 
         }
 

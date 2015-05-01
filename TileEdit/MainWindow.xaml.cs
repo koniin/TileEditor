@@ -98,14 +98,12 @@ namespace TileEdit
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            TileMapRepository.WriteMapFile(model.CanvasWidth, model.CanvasHeight, currentMap, TileGrid.Tiles, model.Sprites);
-            Status.Text = "Saved tilemap to: " + FilePath.Text;
+            SaveFile(currentMap);
         }
 
         private void SaveCompressed_Click(object sender, RoutedEventArgs e)
         {
-            TileMapRepository.WriteMapFile(model.CanvasWidth, model.CanvasHeight, currentMap, TileGrid.Tiles, model.Sprites, true);
-            Status.Text = "Saved tilemap compressed to: " + FilePath.Text + ".gz";
+            SaveFile(currentMap, true);
         }
 
         private void SaveAs_Click(object sender, RoutedEventArgs e)
@@ -135,10 +133,11 @@ namespace TileEdit
         {
             FilePath.Text = fileName;
             currentMap = fileName;
-            TileMapRepository.WriteMapFile(model.CanvasWidth, model.CanvasHeight, fileName, TileGrid.Tiles, model.Sprites, compress);
+            TileMapRepository.WriteMapFile(model.CanvasWidth, model.CanvasHeight, fileName, TileGrid.Layers, model.Sprites, compress);
             Status.Text = "Saved tilemap to: " + fileName;
             Settings.AddUpdateAppSettings(Settings.SpriteDirectory, System.IO.Path.GetFileName(fileName));
         }
+
 
         private void Load_Click(object sender, RoutedEventArgs e)
         {
@@ -247,6 +246,12 @@ namespace TileEdit
 
         private void BtnAddLayer_Click(object sender, RoutedEventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(LayerName.Text))
+            {
+                System.Windows.MessageBox.Show("Layer name missing", "Missing info");
+                return;
+            }
+
             TileGrid.AddLayer(LayerName.Text);
             LayerName.Clear();
         }

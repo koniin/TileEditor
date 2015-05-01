@@ -124,7 +124,7 @@ namespace TileEdit.Models
                 }
                 catch (Exception e)
                 {
-
+                    MessageBox.Show(e.Message, "Problem loading file");
                 }
             }
         }
