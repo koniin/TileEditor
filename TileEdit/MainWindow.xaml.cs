@@ -229,7 +229,7 @@ namespace TileEdit
             }
             TileGrid.InvalidateVisual();
         }
-
+                     
         private void lstImages_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             TileGrid.CurrentTile = lstImages.SelectedItem as Sprite;
