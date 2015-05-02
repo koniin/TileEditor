@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gengine.Map;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -31,7 +32,6 @@ namespace TileEdit
                 return null;
 
             TileMap tileMap = ReadHeader(lines.First());
-            List<Sprite> sprites = new List<Sprite>();
             foreach (string line in lines.Skip(1))
             {
                 LayerInfo layerInfo = GetLayerInfo(line);
@@ -66,14 +66,13 @@ namespace TileEdit
 
         private static Sprite GetSprite(string line)
         {
-            Sprite sprite = new Sprite();
-
             string[] values = line.Split(COLUMNDELIMITER.ToCharArray());
 
-            sprite.X = int.Parse(values[1].Split(',')[0]);
-            sprite.Y = int.Parse(values[1].Split(',')[1]);
-            sprite.Name = values[2];
+            Sprite sprite = new Sprite(int.Parse(values[1].Split(',')[0]),
+                int.Parse(values[1].Split(',')[1]),
+                StringToRectangle(values[3]));
             sprite.SourceRect = StringToRectangle(values[3]);
+            sprite.Name = values[2];
             return sprite;
         }
 

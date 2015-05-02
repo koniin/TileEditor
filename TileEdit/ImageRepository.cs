@@ -23,7 +23,7 @@ namespace TileEdit
 
         public static bool Contains(string name)
         {
-            return Images.ContainsKey(name);
+            return Images.Any() && Images.ContainsKey(name);
         }
     }
 }

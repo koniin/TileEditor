@@ -210,7 +210,7 @@ namespace TileEdit.Models
                     Bitmap cloneBitmap = image.Clone(cloneRect, image.PixelFormat);
                     var imageSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(cloneBitmap.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
                     ImageRepository.AddImage(spriteName, imageSource);
-                    Sprites.Add(new Sprite
+                    Sprites.Add(new Sprite(0, 0, cloneRect)
                     {
                         Name = spriteName,
                         FilePath = fileName,

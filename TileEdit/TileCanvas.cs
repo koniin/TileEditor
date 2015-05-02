@@ -8,6 +8,7 @@ using System.Windows.Media;
 using TileEdit.Models;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Gengine.Map;
 
 namespace TileEdit
 {
@@ -116,6 +117,12 @@ namespace TileEdit
 
         private void AddCurrentTile(Point position)
         {
+            if (CurrentTile == null)
+            {
+                MessageBox.Show("No tile selected", "Missing tile");
+                return;
+            }
+
             int x = (int)position.X;
             int y = (int)position.Y;
 
@@ -127,11 +134,8 @@ namespace TileEdit
             Debug.WriteLine("start x : " + startX);
             Debug.WriteLine("start y : " + startY);
 
-            Sprite sprite = new Sprite();
-
+            Sprite sprite = new Sprite(startX, startY, new System.Drawing.Rectangle(startX, startY, _TileSize, _TileSize));
             sprite.Name = CurrentTile.Name;
-            sprite.X = startX;
-            sprite.Y = startY;
 
             if(startY < this.Height && startX < this.Width)
                 AddTile(sprite);
@@ -146,9 +150,9 @@ namespace TileEdit
 
         public void RemoveTile(int x, int y)
         {
-            Sprite sp = Layers[_SelectedLayer].Tiles.FirstOrDefault(t => t.X == x && t.Y == y);
-            if (sp != null)
-                Layers[_SelectedLayer].Tiles.Remove(sp);
+            Tile tile = Layers[_SelectedLayer].Tiles.FirstOrDefault(t => t.Position.X == x && t.Position.Y == y);
+            if (tile != null)
+                Layers[_SelectedLayer].Tiles.Remove(tile);
             this.InvalidateVisual();
         }
 

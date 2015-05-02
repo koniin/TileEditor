@@ -174,6 +174,12 @@ namespace TileEdit
 
         private void LoadTileMap(string fileName, bool compressed = false)
         {
+            if (System.IO.Path.GetExtension(fileName) != ".tmap" && System.IO.Path.GetExtension(fileName) != ".txt")
+            {
+                System.Windows.MessageBox.Show(fileName, "Invalid file");
+                return;
+            }
+
             currentMap = fileName;
             TileGrid.ClearTiles();
 
