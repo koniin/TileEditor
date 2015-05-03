@@ -136,6 +136,7 @@ namespace TileEdit
 
             Sprite sprite = new Sprite(startX, startY, new System.Drawing.Rectangle(startX, startY, _TileSize, _TileSize));
             sprite.Name = CurrentTile.Name;
+            sprite.EditorId = CurrentTile.EditorId;
 
             if(startY < this.Height && startX < this.Width)
                 AddTile(sprite);
@@ -186,9 +187,9 @@ namespace TileEdit
                 dc.PushOpacity(opacity);
                 foreach (Sprite sprite in layer.Tiles)
                 {
-                    if (ImageRepository.Contains(sprite.Name))
+                    if (ImageRepository.Contains(sprite.EditorId))
                     {
-                        ImageSource image = ImageRepository.GetImage(sprite.Name);
+                        ImageSource image = ImageRepository.GetImage(sprite.EditorId);
                         rect.X = sprite.X;
                         rect.Y = sprite.Y;
                         rect.Height = image.Height;

@@ -9,9 +9,8 @@ using System.Windows.Media;
 
 namespace TileEdit.Models
 {
-    public class Sprite : Tile
-    {
-        public string Name { get; set; }
+    public class Sprite : Tile {
+        public string EditorId { get; set; }
         public string FilePath { get; set; }
         public string Type { get; set; }
         public int X { get; set; }
@@ -23,6 +22,7 @@ namespace TileEdit.Models
             X = x;
             Y = y;
         }
-        public Sprite(Texture2D texture, Vector2 position, Rectangle sourceRectangle) : base(texture, position, sourceRectangle) { }
+
+        public Sprite(string textureName, Vector2 position, Rectangle sourceRectangle) : base(textureName, position, sourceRectangle) { }
     }
 }

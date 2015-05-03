@@ -205,14 +205,16 @@ namespace TileEdit.Models
             {
                 for (int i = 0; i < x; i++)
                 {
-                    string spriteName = name + counter;
+                    string spriteEditorId = name + counter;
+                    string spriteName = name;
                     var cloneRect = new System.Drawing.Rectangle(i * 32, j * 32, 32, 32);
                     Bitmap cloneBitmap = image.Clone(cloneRect, image.PixelFormat);
                     var imageSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(cloneBitmap.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-                    ImageRepository.AddImage(spriteName, imageSource);
+                    ImageRepository.AddImage(spriteEditorId, imageSource);
                     Sprites.Add(new Sprite(0, 0, cloneRect)
                     {
                         Name = spriteName,
+                        EditorId = spriteEditorId,
                         FilePath = fileName,
                         ImageSource = imageSource,
                         SourceRect = cloneRect

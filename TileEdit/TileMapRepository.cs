@@ -1,4 +1,5 @@
 ﻿using Gengine.Map;
+using Gengine.Utils;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -68,11 +69,12 @@ namespace TileEdit
         {
             string[] values = line.Split(COLUMNDELIMITER.ToCharArray());
 
-            Sprite sprite = new Sprite(int.Parse(values[1].Split(',')[0]),
-                int.Parse(values[1].Split(',')[1]),
-                StringToRectangle(values[3]));
-            sprite.SourceRect = StringToRectangle(values[3]);
-            sprite.Name = values[2];
+            Sprite sprite = new Sprite(int.Parse(values[2].Split(',')[0]),
+                int.Parse(values[2].Split(',')[1]),
+                StringToRectangle(values[4]));
+            sprite.SourceRect = StringToRectangle(values[4]);
+            sprite.EditorId = values[3];
+            sprite.Name = values[1];
             return sprite;
         }
 
@@ -92,7 +94,7 @@ namespace TileEdit
             {
                 foreach (Sprite sprite in layer.Tiles)
                 {
-                    WriteSpriteLine(sb, layer, sprite, sprites.First(s => s.Name == sprite.Name).SourceRect);
+                    WriteSpriteLine(sb, layer, sprite, sprites.First(s => s.EditorId == sprite.EditorId).SourceRect);
                 }
             }
 
@@ -109,7 +111,7 @@ namespace TileEdit
 
         private static void WriteSpriteLine(StringBuilder sb, Layer layer, Sprite sprite, Rectangle sourceRect)
         {
-            sb.AppendLine(string.Format("{1}{0}{2},{3}{0}{4}{0}{5}", COLUMNDELIMITER, layer.Serialize(), sprite.X, sprite.Y, sprite.Name, RectangleToString(sourceRect)));
+            sb.AppendLine(string.Format("{1}{0}{2}{0}{3},{4}{0}{5}{0}{6}", COLUMNDELIMITER, layer.Serialize(), sprite.Name, sprite.X, sprite.Y, sprite.EditorId, RectangleToString(sourceRect)));
         }
 
         private static string RectangleToString(Rectangle rect)
