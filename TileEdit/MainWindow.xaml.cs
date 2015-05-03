@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gengine.Map;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -89,6 +90,7 @@ namespace TileEdit
             if (result == System.Windows.Forms.DialogResult.OK)
             {
                 TileGrid.ClearTiles();
+                TileGrid.AddNewLayer("Main");
                 File.Create(dialog.FileName);
                 FilePath.Text = dialog.FileName;
                 currentMap = dialog.FileName;
@@ -138,7 +140,7 @@ namespace TileEdit
         {
             FilePath.Text = fileName;
             currentMap = fileName;
-            TileMapRepository.WriteMapFile(model.CanvasWidth, model.CanvasHeight, fileName, TileGrid.Layers, model.Sprites, compress);
+            TileMapRepository.WriteMapFile(model.CanvasWidth, model.CanvasHeight, fileName, TileGrid.Layers, compress);
             Status.Text = "Saved tilemap to: " + fileName;
             Settings.AddUpdateAppSettings(Settings.SpriteDirectory, System.IO.Path.GetFileName(fileName));
         }
@@ -186,10 +188,8 @@ namespace TileEdit
             TileMap tileMap = TileMapRepository.ReadMapFile(fileName, compressed);
             if (tileMap != null)
             {
-                foreach (var layer in tileMap.Layers)
-                {
-                    TileGrid.Layers.Add(layer);
-                }
+                TileGrid.AddLayers(tileMap.Layers);
+                TileGrid.Update(model.Sprites);
 
                 model.CanvasWidth = tileMap.Width;
                 model.CanvasHeight = tileMap.Height;
@@ -227,6 +227,8 @@ namespace TileEdit
             {
                 model.LoadSheet(dialog.FileName);
             }
+
+            TileGrid.Update(model.Sprites);
             TileGrid.InvalidateVisual();
         }
                      

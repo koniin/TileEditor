@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -205,19 +206,13 @@ namespace TileEdit.Models
             {
                 for (int i = 0; i < x; i++)
                 {
-                    string spriteEditorId = name + counter;
                     string spriteName = name;
                     var cloneRect = new System.Drawing.Rectangle(i * 32, j * 32, 32, 32);
                     Bitmap cloneBitmap = image.Clone(cloneRect, image.PixelFormat);
                     var imageSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(cloneBitmap.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-                    ImageRepository.AddImage(spriteEditorId, imageSource);
-                    Sprites.Add(new Sprite(0, 0, cloneRect)
+                    Sprites.Add(new Sprite(spriteName, new Vector2(0, 0), new Microsoft.Xna.Framework.Rectangle(cloneRect.X, cloneRect.Y, cloneRect.Width, cloneRect.Height))
                     {
-                        Name = spriteName,
-                        EditorId = spriteEditorId,
-                        FilePath = fileName,
-                        ImageSource = imageSource,
-                        SourceRect = cloneRect
+                        ImageSource = imageSource
                     });
                     counter++;
                 }

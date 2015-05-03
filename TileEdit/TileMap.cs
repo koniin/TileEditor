@@ -6,28 +6,15 @@ using System.Text;
 using System.Threading.Tasks;
 using TileEdit.Models;
 
-namespace TileEdit
-{
-    public class TileMap
-    {
-        public int Width { get; private set; }
-        public int Height { get; private set; }
-        public IList<Layer> Layers { get; private set; }
+namespace TileEdit {
+    public class TileMap : Gengine.Map.TileMap {
+        public TileMap(int width, int height) : base(width, height) {}
 
-        public TileMap(int width, int height)
-        {
-            Width = width;
-            Height = height;
-            Layers = new List<Layer>();
-        }
-
-        public void AddLayer(Layer layer)
-        {
+        public void AddLayer(Layer layer) {
             Layers.Add(layer);
         }
 
-        public void AddSprite(string layerName, Sprite sprite)
-        {
+        public void AddSprite(string layerName, Sprite sprite) {
             Layer layer = Layers.First(l => l.Name == layerName);
             layer.Tiles.Add(sprite);
         }

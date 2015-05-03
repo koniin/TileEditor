@@ -9,105 +9,88 @@ using TileEdit.Models;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Gengine.Map;
+using Microsoft.Xna.Framework;
 
-namespace TileEdit
-{
-    public class TileCanvas : Canvas, INotifyPropertyChanged
-    {
+namespace TileEdit {
+    public class TileCanvas : Canvas, INotifyPropertyChanged {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void NotifiyPropertyChanged(string property)
-        {
+        private void NotifiyPropertyChanged(string property) {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(property));
         }
 
         private int _TileSize = 32;
-        public int TileSize
-        {
-            get
-            {
+        public int TileSize {
+            get {
                 return _TileSize;
             }
-            set
-            {
+            set {
                 _TileSize = value;
             }
         }
 
         private int _SelectedLayer;
-        public int SelectedLayer
-        {
-            get
-            {
+        public int SelectedLayer {
+            get {
                 return _SelectedLayer;
             }
-            set
-            {
-                if (value != _SelectedLayer)
-                {
+            set {
+                if (value != _SelectedLayer) {
                     _SelectedLayer = value;
                     NotifiyPropertyChanged("SelectedLayer");
                 }
             }
         }
 
-        public ObservableCollection<Layer> Layers { get; set; }
+        public ObservableCollection<Layer> Layers { get; private set; }
 
-        public TileCanvas()
-        {
+        public TileCanvas() {
             Layers = new ObservableCollection<Layer>();
             Layers.Add(new Layer { Index = 0, Name = "Main" });
         }
 
         public Sprite CurrentTile { get; set; }
 
-        protected override void OnMouseRightButtonDown(System.Windows.Input.MouseButtonEventArgs e)
-        {
+        protected override void OnMouseRightButtonDown(System.Windows.Input.MouseButtonEventArgs e) {
             base.OnMouseRightButtonDown(e);
 
-            Point position = e.GetPosition(this);
+            System.Windows.Point position = e.GetPosition(this);
             RemoveCurrentTile(position);
             this.InvalidateVisual();
         }
 
-        protected override void OnMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
-        {
+        protected override void OnMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e) {
             base.OnMouseLeftButtonDown(e);
-            
+
             if (CurrentTile == null)
                 MessageBox.Show("You must select a sprite first.");
-            else
-            {
-                Point position = e.GetPosition(this);
+            else {
+                System.Windows.Point position = e.GetPosition(this);
                 AddCurrentTile(position);
                 this.InvalidateVisual();
             }
         }
 
-        protected override void OnMouseLeftButtonUp(System.Windows.Input.MouseButtonEventArgs e)
-        {
+        protected override void OnMouseLeftButtonUp(System.Windows.Input.MouseButtonEventArgs e) {
             base.OnMouseLeftButtonUp(e);
         }
 
-        protected override void OnMouseMove(System.Windows.Input.MouseEventArgs e)
-        {
+        protected override void OnMouseMove(System.Windows.Input.MouseEventArgs e) {
             base.OnMouseMove(e);
 
-            if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
-            {
+            if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed) {
                 AddCurrentTile(e.GetPosition(this));
                 this.InvalidateVisual();
             }
         }
 
-        public void AddNewLayer(string name)
-        {
+        public void AddNewLayer(string name) {
             Layers.Add(new Layer { Name = name, Index = Layers.Count() });
+            _SelectedLayer = 1;
         }
 
-        private void RemoveCurrentTile(Point position)
-        {
+        private void RemoveCurrentTile(System.Windows.Point position) {
             int x = (int)position.X;
             int y = (int)position.Y;
             int startX = x - (x % _TileSize);
@@ -115,10 +98,8 @@ namespace TileEdit
             RemoveTile(startX, startY);
         }
 
-        private void AddCurrentTile(Point position)
-        {
-            if (CurrentTile == null)
-            {
+        private void AddCurrentTile(System.Windows.Point position) {
+            if (CurrentTile == null) {
                 MessageBox.Show("No tile selected", "Missing tile");
                 return;
             }
@@ -127,46 +108,40 @@ namespace TileEdit
             int y = (int)position.Y;
 
             Debug.WriteLine("x: " + x + ", y: " + y);
-            
+
             int startX = x - (x % _TileSize);
             int startY = y - (y % _TileSize);
 
             Debug.WriteLine("start x : " + startX);
             Debug.WriteLine("start y : " + startY);
 
-            Sprite sprite = new Sprite(startX, startY, new System.Drawing.Rectangle(startX, startY, _TileSize, _TileSize));
-            sprite.Name = CurrentTile.Name;
-            sprite.EditorId = CurrentTile.EditorId;
+            Sprite sprite = new Sprite(CurrentTile.TextureName, new Vector2(startX, startY), CurrentTile.SourceRectangle);
+            sprite.ImageSource = CurrentTile.ImageSource;
 
-            if(startY < this.Height && startX < this.Width)
+            if (startY < this.Height && startX < this.Width)
                 AddTile(sprite);
         }
 
-        public void AddTile(Sprite sprite)
-        {
-            RemoveTile(sprite.X, sprite.Y);
+        public void AddTile(Sprite sprite) {
+            RemoveTile((int)sprite.Position.X, (int)sprite.Position.Y);
 
             Layers[_SelectedLayer].Tiles.Add(sprite);
         }
 
-        public void RemoveTile(int x, int y)
-        {
+        public void RemoveTile(int x, int y) {
             Tile tile = Layers[_SelectedLayer].Tiles.FirstOrDefault(t => t.Position.X == x && t.Position.Y == y);
             if (tile != null)
                 Layers[_SelectedLayer].Tiles.Remove(tile);
             this.InvalidateVisual();
         }
 
-        protected override void OnRender(System.Windows.Media.DrawingContext dc)
-        {
+        protected override void OnRender(System.Windows.Media.DrawingContext dc) {
             base.OnRender(dc);
 
             Pen pen = new Pen(Brushes.Black, 1);
             Rect rect = new Rect();
-            for (int y = 0; y < this.Height; y += _TileSize)
-            {
-                for (int x = 0; x < this.Width; x += _TileSize)
-                {
+            for (int y = 0; y < this.Height; y += _TileSize) {
+                for (int x = 0; x < this.Width; x += _TileSize) {
                     rect.X = x;
                     rect.Y = y;
                     dc.DrawRectangle(null, pen, rect);
@@ -177,35 +152,43 @@ namespace TileEdit
             RenderTiles(dc);
         }
 
-        protected void RenderTiles(System.Windows.Media.DrawingContext dc)
-        {
-            Rect rect = new Rect();
+        protected void RenderTiles(System.Windows.Media.DrawingContext dc) {
             double opacityIncrement = 1.0f / Layers.Count;
             double opacity = opacityIncrement;
-            foreach (Layer layer in Layers)
-            {
+            foreach (Layer layer in Layers) {
                 dc.PushOpacity(opacity);
-                foreach (Sprite sprite in layer.Tiles)
-                {
-                    if (ImageRepository.Contains(sprite.EditorId))
-                    {
-                        ImageSource image = ImageRepository.GetImage(sprite.EditorId);
-                        rect.X = sprite.X;
-                        rect.Y = sprite.Y;
-                        rect.Height = image.Height;
-                        rect.Width = image.Width;
-                        dc.DrawImage(image, rect);
-                    }
+                foreach (Sprite sprite in layer.Tiles) {
+                    dc.DrawImage(sprite.ImageSource, sprite.Rect);
                 }
                 dc.Pop();
                 opacity += opacityIncrement;
             }
         }
 
-        internal void ClearTiles()
-        {
+        internal void ClearTiles() {
             Layers.Clear();
             this.InvalidateVisual();
+        }
+
+        public void Update(IList<Sprite> sprites) {
+            foreach (Layer layer in Layers) {
+                foreach (Sprite sprite in layer.Tiles) {
+                    var target = sprites.FirstOrDefault(s => s.TextureName == sprite.TextureName && s.SourceRectangle.X == sprite.SourceRectangle.X && s.SourceRectangle.Y == sprite.SourceRectangle.Y);
+                    if (target != null)
+                        sprite.ImageSource = target.ImageSource;
+                }
+            }
+        }
+
+        public void AddLayers(IList<Layer> layers) {
+            if (layers.Any()) {
+                foreach (var layer in layers) {
+                    Layers.Add(layer);
+                }
+                _SelectedLayer = 1;
+            } else {
+                AddNewLayer("Main");
+            }
         }
     }
 }
