@@ -17,62 +17,51 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using TileEdit.Models;
 
-namespace TileEdit
-{
+namespace TileEdit {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
-    {
+    public partial class MainWindow : Window {
         TileFormViewModel model;
+        TileMapRepository tileMapRepository;
         private string lastFolder = null;
         private string currentMap;
-        
-        public MainWindow()
-        {
+
+        public MainWindow() {
             InitializeComponent();
-
+            tileMapRepository = new TileMapRepository();
             model = new TileFormViewModel();
-
             model.PropertyChanged += model_PropertyChanged;
-
             Layers.SelectedIndex = 0;
-
             this.DataContext = model;
-
             DrawRulers();
         }
 
-        void model_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "CanvasWidth" || e.PropertyName == "CanvasHeight" || e.PropertyName == "TileSize")
-            {
+        void model_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
+            if (e.PropertyName == "CanvasWidth" || e.PropertyName == "CanvasHeight" || e.PropertyName == "TileSize") {
                 DrawRulers();
             }
         }
 
-        private void DrawRulers()
-        {
+        private void DrawRulers() {
             TopRuler.Children.Clear();
             LeftRuler.Children.Clear();
 
-            for(int i = 0; i < model.CanvasWidth; i += model.TileSize)
-            {
+            for (int i = 0; i < model.CanvasWidth; i += model.TileSize) {
                 TextBlock textBlock = new TextBlock();
                 textBlock.Text = i.ToString();
                 textBlock.HorizontalAlignment = System.Windows.HorizontalAlignment.Center;
                 textBlock.VerticalAlignment = System.Windows.VerticalAlignment.Center;
-                Canvas.SetLeft(textBlock, i+5);
+                Canvas.SetLeft(textBlock, i + 5);
                 //Canvas.SetTop(textBlock, 0);
                 TopRuler.Children.Add(textBlock);
             }
 
-            for (int i = 0; i < model.CanvasHeight; i += model.TileSize)
-            {
+            for (int i = 0; i < model.CanvasHeight; i += model.TileSize) {
                 TextBlock textBlock = new TextBlock();
                 textBlock.Text = i.ToString();
                 textBlock.HorizontalAlignment = System.Windows.HorizontalAlignment.Right;
-                Canvas.SetTop(textBlock, i+15);
+                Canvas.SetTop(textBlock, i + 15);
 
                 //Dirty for fixing margin (alignment)
                 Canvas.SetLeft(textBlock, i > 999 ? 1 : (i > 99 ? 5 : (i > 9 ? 10 : 15)));
@@ -80,15 +69,13 @@ namespace TileEdit
             }
         }
 
-        private void New_Click(object sender, RoutedEventArgs e)
-        {
+        private void New_Click(object sender, RoutedEventArgs e) {
             var dialog = new SaveFileDialog();
             if (lastFolder != null)
                 dialog.InitialDirectory = lastFolder;
             dialog.Filter = "Map Files|*.tmap|Text Files|*.txt";
             DialogResult result = dialog.ShowDialog();
-            if (result == System.Windows.Forms.DialogResult.OK)
-            {
+            if (result == System.Windows.Forms.DialogResult.OK) {
                 TileGrid.ClearTiles();
                 TileGrid.AddNewLayer("Main");
                 File.Create(dialog.FileName);
@@ -98,86 +85,70 @@ namespace TileEdit
             }
         }
 
-        private void Save_Click(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(currentMap))
-            {
+        private void Save_Click(object sender, RoutedEventArgs e) {
+            if (string.IsNullOrWhiteSpace(currentMap)) {
                 SaveAs_Click(sender, e);
-            }
-            else
+            } else
                 SaveFile(currentMap);
         }
 
-        private void SaveCompressed_Click(object sender, RoutedEventArgs e)
-        {
+        private void SaveCompressed_Click(object sender, RoutedEventArgs e) {
             SaveFile(currentMap, true);
         }
 
-        private void SaveAs_Click(object sender, RoutedEventArgs e)
-        {
+        private void SaveAs_Click(object sender, RoutedEventArgs e) {
             SaveAs(false);
         }
 
-        private void SaveAsCompressed_Click(object sender, RoutedEventArgs e)
-        {
+        private void SaveAsCompressed_Click(object sender, RoutedEventArgs e) {
             SaveAs(true);
         }
 
-        private void SaveAs(bool compress)
-        {
+        private void SaveAs(bool compress) {
             var dialog = new SaveFileDialog();
             if (lastFolder != null)
                 dialog.InitialDirectory = lastFolder;
             dialog.Filter = "Map Files|*.tmap|Text Files|*.txt";
             DialogResult result = dialog.ShowDialog();
-            if (result == System.Windows.Forms.DialogResult.OK)
-            {
+            if (result == System.Windows.Forms.DialogResult.OK) {
                 SaveFile(dialog.FileName, compress);
             }
         }
 
-        private void SaveFile(string fileName, bool compress = false)
-        {
+        private void SaveFile(string fileName, bool compress = false) {
             FilePath.Text = fileName;
             currentMap = fileName;
-            TileMapRepository.WriteMapFile(model.CanvasWidth, model.CanvasHeight, fileName, TileGrid.Layers, compress);
+            tileMapRepository.WriteMap(model.CanvasWidth, model.CanvasHeight, fileName, TileGrid.Layers, compress);
             Status.Text = "Saved tilemap to: " + fileName;
             Settings.AddUpdateAppSettings(Settings.SpriteDirectory, System.IO.Path.GetFileName(fileName));
         }
 
 
-        private void Load_Click(object sender, RoutedEventArgs e)
-        {
+        private void Load_Click(object sender, RoutedEventArgs e) {
             LoadTileMap(FilePath.Text);
         }
 
-        private void Browse_Click(object sender, RoutedEventArgs e)
-        {
+        private void Browse_Click(object sender, RoutedEventArgs e) {
             OpenFile(false);
         }
 
-        private void BrowseCompressed_Click(object sender, RoutedEventArgs e)
-        {
+        private void BrowseCompressed_Click(object sender, RoutedEventArgs e) {
             OpenFile(true);
         }
 
-        private void OpenFile(bool compressed)
-        {
+        private void OpenFile(bool compressed) {
             OpenFileDialog dialog = new OpenFileDialog();
             if (compressed)
                 dialog.Filter = "GZip files|*.gz";
             DialogResult result = dialog.ShowDialog();
-            if (result == System.Windows.Forms.DialogResult.OK)
-            {
+            if (result == System.Windows.Forms.DialogResult.OK) {
                 FilePath.Text = dialog.FileName;
                 LoadTileMap(dialog.FileName, compressed);
             }
         }
 
-        private void LoadTileMap(string fileName, bool compressed = false)
-        {
-            if (System.IO.Path.GetExtension(fileName) != ".tmap" && System.IO.Path.GetExtension(fileName) != ".txt")
-            {
+        private void LoadTileMap(string fileName, bool compressed = false) {
+            if (System.IO.Path.GetExtension(fileName) != ".tmap" && System.IO.Path.GetExtension(fileName) != ".txt") {
                 System.Windows.MessageBox.Show(fileName, "Invalid file");
                 return;
             }
@@ -185,9 +156,8 @@ namespace TileEdit
             currentMap = fileName;
             TileGrid.ClearTiles();
 
-            TileMap tileMap = TileMapRepository.ReadMapFile(fileName, compressed);
-            if (tileMap != null)
-            {
+            TileMapWrapper tileMap = tileMapRepository.LoadMap(fileName, compressed);
+            if (tileMap != null) {
                 TileGrid.AddLayers(tileMap.Layers);
                 TileGrid.Update(model.Sprites);
 
@@ -195,72 +165,59 @@ namespace TileEdit
                 model.CanvasHeight = tileMap.Height;
                 Status.Text = "Loaded tilemap from: " + currentMap;
                 TileGrid.SelectedLayer = 0;
-            }
-            else
-            {
+            } else {
                 Status.Text = "Tilemap load failed: " + currentMap;
             }
         }
 
-        private void AddSprites_Click(object sender, RoutedEventArgs e)
-        {
+        private void AddSprites_Click(object sender, RoutedEventArgs e) {
             var dialog = new FolderBrowserDialog();
             if (lastFolder != null)
                 dialog.SelectedPath = lastFolder;
             DialogResult result = dialog.ShowDialog();
-            if (result == System.Windows.Forms.DialogResult.OK) 
-            {
+            if (result == System.Windows.Forms.DialogResult.OK) {
                 model.LoadFiles(dialog.SelectedPath);
                 Settings.AddUpdateAppSettings(Settings.SpriteDirectory, dialog.SelectedPath);
                 lastFolder = dialog.SelectedPath;
             }
         }
 
-        private void AddSpriteSheet_Click(object sender, RoutedEventArgs e)
-        {
+        private void AddSpriteSheet_Click(object sender, RoutedEventArgs e) {
             var dialog = new OpenFileDialog();
             if (lastFolder != null)
                 dialog.InitialDirectory = lastFolder;
 
             DialogResult result = dialog.ShowDialog();
-            if (result == System.Windows.Forms.DialogResult.OK) 
-            {
+            if (result == System.Windows.Forms.DialogResult.OK) {
                 model.LoadSheet(dialog.FileName);
             }
 
             TileGrid.Update(model.Sprites);
             TileGrid.InvalidateVisual();
         }
-                     
-        private void lstImages_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
+
+        private void lstImages_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             TileGrid.CurrentTile = lstImages.SelectedItem as Sprite;
         }
 
-        private void IncreaseWidth_Click(object sender, RoutedEventArgs e)
-        {
+        private void IncreaseWidth_Click(object sender, RoutedEventArgs e) {
             model.CanvasWidth += int.Parse(TileSize.Text);
         }
 
-        private void IncreaseHeight_Click(object sender, RoutedEventArgs e)
-        {
+        private void IncreaseHeight_Click(object sender, RoutedEventArgs e) {
             model.CanvasHeight += int.Parse(TileSize.Text);
         }
 
-        private void Exit_Click(object sender, RoutedEventArgs e)
-        {
+        private void Exit_Click(object sender, RoutedEventArgs e) {
             this.Close();
         }
 
-        private void About_Click(object sender, RoutedEventArgs e)
-        {
+        private void About_Click(object sender, RoutedEventArgs e) {
             System.Windows.MessageBox.Show("Made by Henrik Aronsson - 2015", "About", MessageBoxButton.OK);
         }
-        
-        private void BtnAddLayer_Click(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(LayerName.Text))
-            {
+
+        private void BtnAddLayer_Click(object sender, RoutedEventArgs e) {
+            if (string.IsNullOrWhiteSpace(LayerName.Text)) {
                 System.Windows.MessageBox.Show("Layer name missing", "Missing info");
                 return;
             }
@@ -269,8 +226,7 @@ namespace TileEdit
             LayerName.Clear();
         }
 
-        private void LayerName_GotFocus(object sender, RoutedEventArgs e)
-        {
+        private void LayerName_GotFocus(object sender, RoutedEventArgs e) {
             LayerName.SelectAll();
         }
     }

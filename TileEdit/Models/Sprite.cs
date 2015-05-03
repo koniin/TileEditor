@@ -8,8 +8,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Media;
 
-namespace TileEdit.Models
-{
+namespace TileEdit.Models {
     public class Sprite : Tile {
         public ImageSource ImageSource { get; set; }
         public Rect Rect {
@@ -18,6 +17,6 @@ namespace TileEdit.Models
             }
         }
 
-        public Sprite(string textureName, Vector2 position, Rectangle sourceRectangle) : base(textureName, position, sourceRectangle) {}
+        public Sprite(string textureName, Vector2 position, Rectangle sourceRectangle) : base(textureName, position, sourceRectangle) { }
     }
 }

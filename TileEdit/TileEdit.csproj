@@ -61,7 +61,7 @@
     </ApplicationDefinition>
     <Compile Include="Settings.cs" />
     <Compile Include="TileCanvas.cs" />
-    <Compile Include="TileMap.cs" />
+    <Compile Include="Models\TileMap.cs" />
     <Compile Include="TileMapRepository.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

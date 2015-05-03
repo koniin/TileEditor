@@ -9,21 +9,25 @@ using System.Text;
 using System.Threading.Tasks;
 using TileEdit.Models;
 
-namespace TileEdit
-{
-    public static class TileMapRepository {
-        public static void WriteMapFile(int width, int height, string fileName, IList<Layer> layers, bool compress = false) {
-            MapRepository.WriteMapFile(width, height, fileName, layers, compress);
+namespace TileEdit {
+    public class TileMapRepository {
+        private IMapRepository mapRepository;
+        public TileMapRepository() {
+            mapRepository = new MapRepository();
         }
 
-        public static TileMap ReadMapFile(string fileName, bool compressed = false) {
-            Gengine.Map.TileMap tileMap = MapRepository.ReadMapFile(fileName, compressed);
-            TileMap result = new TileMap(tileMap.Width, tileMap.Height);
+        public void WriteMap(int width, int height, string fileName, IList<Layer> layers, bool compress = false) {
+            mapRepository.WriteMap(width, height, fileName, layers, compress);
+        }
+
+        public TileMapWrapper LoadMap(string fileName, bool compressed = false) {
+            TileMap tileMap = mapRepository.LoadMap(fileName, compressed);
+            TileMapWrapper result = new TileMapWrapper(tileMap.Width, tileMap.Height);
             ConvertLayers(result, tileMap.Layers);
             return result;
         }
 
-        private static void ConvertLayers(TileMap result, IList<Layer> layersToConvert) {
+        private static void ConvertLayers(TileMapWrapper result, IList<Layer> layersToConvert) {
             List<Layer> layers = new List<Layer>();
             foreach (Layer l in layersToConvert) {
                 l.Tiles = ConvertTiles(l.Tiles);
