@@ -74,15 +74,15 @@ namespace TileEdit {
 
         protected override void OnMouseLeftButtonUp(System.Windows.Input.MouseButtonEventArgs e) {
             base.OnMouseLeftButtonUp(e);
-            this.InvalidateVisual();
         }
 
         protected override void OnMouseMove(System.Windows.Input.MouseEventArgs e) {
             base.OnMouseMove(e);
 
             if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed) {
-                if (AddCurrentTile(e.GetPosition(this))) { }
-                    this.InvalidateVisual();
+                if (AddCurrentTile(e.GetPosition(this))) { 
+
+                }
             }
         }
 
@@ -119,7 +119,7 @@ namespace TileEdit {
 
             Sprite sprite = new Sprite(CurrentTile.TextureName, currentPosition, CurrentTile.SourceRectangle);
             sprite.ImageSource = CurrentTile.ImageSource;
-
+            
             if (startY < this.Height && startX < this.Width)
                 AddTile(sprite);
             return true;
@@ -129,25 +129,42 @@ namespace TileEdit {
             RemoveTile((int)sprite.Position.X, (int)sprite.Position.Y);
 
             Layers[_SelectedLayer].Tiles.Add(sprite);
+
+            Image finalImage = new Image();
+            finalImage.Source = sprite.ImageSource;
+            Canvas.SetLeft(finalImage, sprite.Position.X);
+            Canvas.SetTop(finalImage, sprite.Position.Y);
+            Children.Add(finalImage);
         }
 
         public void RemoveTile(int x, int y) {
             Tile tile = Layers[_SelectedLayer].Tiles.FirstOrDefault(t => t.Position.X == x && t.Position.Y == y);
             if (tile != null) {
                 Layers[_SelectedLayer].Tiles.Remove(tile);
-                this.InvalidateVisual();
+
+                System.Windows.Shapes.Rectangle rectangle = new System.Windows.Shapes.Rectangle();
+                rectangle.Stroke = Brushes.DarkGray;
+                rectangle.StrokeThickness = 0.5;
+                rectangle.Fill = Background;
+                rectangle.Width = _TileSize;
+                rectangle.Height = _TileSize;
+                Canvas.SetLeft(rectangle, x);
+                Canvas.SetTop(rectangle, y);
+                Children.Add(rectangle);
             }
         }
 
         protected override void OnRender(System.Windows.Media.DrawingContext dc) {
             base.OnRender(dc);
 
-            Pen pen = new Pen(Brushes.Black, 1);
+            Pen pen = new Pen(Brushes.DarkGray, 1);
             Rect rect = new Rect();
             for (int y = 0; y < this.Height + _TileSize; y += _TileSize) {
                 for (int x = 0; x < this.Width + _TileSize; x += _TileSize) {
                     rect.X = x;
                     rect.Y = y;
+                    rect.Width = _TileSize;
+                    rect.Height = _TileSize;
                     dc.DrawRectangle(null, pen, rect);
 
                 }
