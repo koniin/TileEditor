@@ -32,6 +32,7 @@
             <MenuItem Header="_Sprites ">
                 <MenuItem Header="_Load all from folder" Click="AddSprites_Click" />
                 <MenuItem Header="_Load single sheet" Click="AddSpriteSheet_Click" />
+                <MenuItem Header="_Load large sprite" Click="AddLargeSpriteSheet_Click" />
             </MenuItem>
             <MenuItem Header="_Help ">
                 <MenuItem Header="_About" Click="About_Click" />

@@ -174,5 +174,24 @@ namespace TileEdit.Models {
             }
         }
 
+        public void LoadLargeSheet(string fileName) {
+            Bitmap image;
+            try {
+                image = new Bitmap(fileName);
+            } catch (Exception e) {
+                MessageBox.Show(e.Message, "Error loading image");
+                return;
+            }
+
+            string name = System.IO.Path.GetFileName(fileName);
+
+            string spriteName = name;
+            var cloneRect = new System.Drawing.Rectangle(0, 0, image.Width, image.Height);
+            Bitmap cloneBitmap = image.Clone(cloneRect, image.PixelFormat);
+            var imageSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(cloneBitmap.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            Sprites.Add(new Sprite(spriteName, new Vector2(0, 0), new Microsoft.Xna.Framework.Rectangle(cloneRect.X, cloneRect.Y, cloneRect.Width, cloneRect.Height)) {
+                ImageSource = imageSource
+            });
+        }
     }
 }

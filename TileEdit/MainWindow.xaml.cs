@@ -196,6 +196,20 @@ namespace TileEdit {
             TileGrid.InvalidateVisual();
         }
 
+        private void AddLargeSpriteSheet_Click(object sender, RoutedEventArgs e) {
+            var dialog = new OpenFileDialog();
+            if (lastFolder != null)
+                dialog.InitialDirectory = lastFolder;
+
+            DialogResult result = dialog.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK) {
+                model.LoadLargeSheet(dialog.FileName);
+            }
+
+            TileGrid.Update(model.Sprites);
+            TileGrid.InvalidateVisual();
+        }
+
         private void lstImages_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             TileGrid.CurrentTile = lstImages.SelectedItem as Sprite;
         }

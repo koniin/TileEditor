@@ -142,15 +142,15 @@ namespace TileEdit {
             if (tile != null) {
                 Layers[_SelectedLayer].Tiles.Remove(tile);
 
-                System.Windows.Shapes.Rectangle rectangle = new System.Windows.Shapes.Rectangle();
-                rectangle.Stroke = Brushes.DarkGray;
-                rectangle.StrokeThickness = 0.5;
-                rectangle.Fill = Background;
-                rectangle.Width = _TileSize;
-                rectangle.Height = _TileSize;
-                Canvas.SetLeft(rectangle, x);
-                Canvas.SetTop(rectangle, y);
-                Children.Add(rectangle);
+                UIElement toRemove = null;
+                foreach (UIElement child in Children) {
+                    UIElement container = VisualTreeHelper.GetParent(child) as UIElement; 
+                    System.Windows.Point relativeLocation = child.TranslatePoint(new System.Windows.Point(0, 0), container);
+                    if (relativeLocation.X == x && relativeLocation.Y == y)
+                        toRemove = child;
+                }
+                if (toRemove != null)
+                    Children.Remove(toRemove);
             }
         }
 
@@ -162,7 +162,7 @@ namespace TileEdit {
             for (int y = 0; y < this.Height + _TileSize; y += _TileSize) {
                 for (int x = 0; x < this.Width + _TileSize; x += _TileSize) {
                     rect.X = x;
-                    rect.Y = y;
+                    rect.Y = y; 
                     rect.Width = _TileSize;
                     rect.Height = _TileSize;
                     dc.DrawRectangle(null, pen, rect);
