@@ -201,7 +201,7 @@ namespace TileEdit {
             }
         }
 
-        public void AddLayers(IList<Layer> layers) {
+        public void AddLayers(IEnumerable<Layer> layers) {
             if (layers.Any()) {
                 foreach (var layer in layers) {
                     Layers.Add(layer);

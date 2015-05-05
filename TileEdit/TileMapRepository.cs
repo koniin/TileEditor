@@ -13,7 +13,7 @@ namespace TileEdit {
     public class TileMapRepository {
         private IMapRepository mapRepository;
         public TileMapRepository() {
-            mapRepository = new MapRepository();
+            mapRepository = new MapRepository(false);
         }
 
         public void WriteMap(int width, int height, string fileName, IList<Layer> layers, bool compress = false) {
@@ -27,11 +27,11 @@ namespace TileEdit {
             return result;
         }
 
-        private static void ConvertLayers(TileMapWrapper result, IList<Layer> layersToConvert) {
+        private static void ConvertLayers(TileMapWrapper result, IEnumerable<Layer> layersToConvert) {
             List<Layer> layers = new List<Layer>();
             foreach (Layer l in layersToConvert) {
                 l.Tiles = ConvertTiles(l.Tiles);
-                result.Layers.Add(l);
+                result.AddLayer(l);
             }
         }
 
