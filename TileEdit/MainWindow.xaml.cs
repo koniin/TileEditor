@@ -61,7 +61,7 @@ namespace TileEdit {
                 TextBlock textBlock = new TextBlock();
                 textBlock.Text = i.ToString();
                 textBlock.HorizontalAlignment = System.Windows.HorizontalAlignment.Right;
-                Canvas.SetTop(textBlock, i + 15);
+                Canvas.SetTop(textBlock, i - 15);
 
                 //Dirty for fixing margin (alignment)
                 Canvas.SetLeft(textBlock, i > 999 ? 1 : (i > 99 ? 5 : (i > 9 ? 10 : 15)));

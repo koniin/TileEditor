@@ -104,11 +104,11 @@ namespace TileEdit.Models {
         }
 
         public TileFormViewModel() {
-            CanvasWidth = 640;
-            CanvasHeight = 320;
-            CanvasViewHeight = 358;
-            CanvasViewWidth = 900;
             TileSize = 32;
+            CanvasWidth = (int)Math.Ceiling(640.0d / (double)_TileSize) * _TileSize;
+            CanvasHeight = (int)Math.Ceiling(360.0d / (double)_TileSize) * _TileSize;
+            CanvasViewHeight = CanvasHeight + 100;
+            CanvasViewWidth = 900;
 
             Sprites = new ObservableCollection<Sprite>();
 

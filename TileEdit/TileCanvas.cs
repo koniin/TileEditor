@@ -48,6 +48,7 @@ namespace TileEdit {
         public TileCanvas() {
             Layers = new ObservableCollection<Layer>();
             Layers.Add(new Layer { Index = 0, Name = "Main" });
+            CacheMode = new BitmapCache();
         }
 
         public Sprite CurrentTile { get; set; }
@@ -68,20 +69,20 @@ namespace TileEdit {
             else {
                 System.Windows.Point position = e.GetPosition(this);
                 AddCurrentTile(position);
-                this.InvalidateVisual();
             }
         }
 
         protected override void OnMouseLeftButtonUp(System.Windows.Input.MouseButtonEventArgs e) {
             base.OnMouseLeftButtonUp(e);
+            this.InvalidateVisual();
         }
 
         protected override void OnMouseMove(System.Windows.Input.MouseEventArgs e) {
             base.OnMouseMove(e);
 
             if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed) {
-                AddCurrentTile(e.GetPosition(this));
-                this.InvalidateVisual();
+                if (AddCurrentTile(e.GetPosition(this))) { }
+                    this.InvalidateVisual();
             }
         }
 
@@ -98,28 +99,30 @@ namespace TileEdit {
             RemoveTile(startX, startY);
         }
 
-        private void AddCurrentTile(System.Windows.Point position) {
+        private Vector2 lastMousePosition = Vector2.Zero;
+
+        private bool AddCurrentTile(System.Windows.Point position) {
             if (CurrentTile == null) {
                 MessageBox.Show("No tile selected", "Missing tile");
-                return;
+                return false;
             }
 
             int x = (int)position.X;
             int y = (int)position.Y;
-
-            Debug.WriteLine("x: " + x + ", y: " + y);
-
             int startX = x - (x % _TileSize);
             int startY = y - (y % _TileSize);
+            Vector2 currentPosition = new Vector2(startX, startY);
+            if (currentPosition.X == lastMousePosition.X && currentPosition.Y == lastMousePosition.Y)
+                return false;
 
-            Debug.WriteLine("start x : " + startX);
-            Debug.WriteLine("start y : " + startY);
+            lastMousePosition = currentPosition;
 
-            Sprite sprite = new Sprite(CurrentTile.TextureName, new Vector2(startX, startY), CurrentTile.SourceRectangle);
+            Sprite sprite = new Sprite(CurrentTile.TextureName, currentPosition, CurrentTile.SourceRectangle);
             sprite.ImageSource = CurrentTile.ImageSource;
 
             if (startY < this.Height && startX < this.Width)
                 AddTile(sprite);
+            return true;
         }
 
         public void AddTile(Sprite sprite) {
@@ -130,9 +133,10 @@ namespace TileEdit {
 
         public void RemoveTile(int x, int y) {
             Tile tile = Layers[_SelectedLayer].Tiles.FirstOrDefault(t => t.Position.X == x && t.Position.Y == y);
-            if (tile != null)
+            if (tile != null) {
                 Layers[_SelectedLayer].Tiles.Remove(tile);
-            this.InvalidateVisual();
+                this.InvalidateVisual();
+            }
         }
 
         protected override void OnRender(System.Windows.Media.DrawingContext dc) {
@@ -140,8 +144,8 @@ namespace TileEdit {
 
             Pen pen = new Pen(Brushes.Black, 1);
             Rect rect = new Rect();
-            for (int y = 0; y < this.Height; y += _TileSize) {
-                for (int x = 0; x < this.Width; x += _TileSize) {
+            for (int y = 0; y < this.Height + _TileSize; y += _TileSize) {
+                for (int x = 0; x < this.Width + _TileSize; x += _TileSize) {
                     rect.X = x;
                     rect.Y = y;
                     dc.DrawRectangle(null, pen, rect);
