@@ -30,8 +30,8 @@
                 <MenuItem Header="_Exit" Click="Exit_Click"/>
             </MenuItem>
             <MenuItem Header="_Sprites ">
-                <MenuItem Header="_Load all from folder" Click="AddSprites_Click" />
-                <MenuItem Header="_Load single sheet" Click="AddSpriteSheet_Click" />
+                <MenuItem Header="_Load sheet" Click="AddSpriteSheet_Click" />
+                <MenuItem Header="_Load all sheets from folder" Click="AddSprites_Click" />
                 <MenuItem Header="_Load large sprite" Click="AddLargeSpriteSheet_Click" />
             </MenuItem>
             <MenuItem Header="_Help ">
