@@ -13,7 +13,7 @@ namespace TileEdit.Models {
         public ImageSource ImageSource { get; set; }
         public Rect Rect {
             get {
-                return new System.Windows.Rect(Position.X, Position.Y, SourceRectangle.Width, SourceRectangle.Height);
+                return new System.Windows.Rect(RenderPosition.X, RenderPosition.Y, SourceRectangle.Width, SourceRectangle.Height);
             }
         }
 
