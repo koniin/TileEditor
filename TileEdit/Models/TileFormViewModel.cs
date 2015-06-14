@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Color = System.Drawing.Color;
 
 namespace TileEdit.Models {
     public class TileFormViewModel : INotifyPropertyChanged {
@@ -91,6 +92,8 @@ namespace TileEdit.Models {
         }
 
         private int _TileSize;
+        private readonly ImageValidator _imageValidator;
+
         public int TileSize {
             get {
                 return _TileSize;
@@ -120,6 +123,7 @@ namespace TileEdit.Models {
             if (settingsDir != null) {
                 LoadFiles(settingsDir);
             }
+            _imageValidator = new ImageValidator();
         }
 
         void TileFormViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -159,17 +163,20 @@ namespace TileEdit.Models {
             int x = image.Width / 32;
             int y = image.Height / 32;
 
-            int counter = 0;
             for (int j = 0; j < y; j++) {
                 for (int i = 0; i < x; i++) {
                     string spriteName = name;
                     var cloneRect = new System.Drawing.Rectangle(i * 32, j * 32, 32, 32);
                     Bitmap cloneBitmap = image.Clone(cloneRect, image.PixelFormat);
-                    var imageSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(cloneBitmap.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-                    Sprites.Add(new Sprite(spriteName, new Vector2(0, 0), new Microsoft.Xna.Framework.Rectangle(cloneRect.X, cloneRect.Y, cloneRect.Width, cloneRect.Height)) {
-                        ImageSource = imageSource
-                    });
-                    counter++;
+                    if (_imageValidator.IsEmpty(cloneBitmap)) continue;
+                    var imageSource =
+                        System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(cloneBitmap.GetHbitmap(),
+                            IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                    Sprites.Add(new Sprite(spriteName, new Vector2(0, 0),
+                        new Microsoft.Xna.Framework.Rectangle(cloneRect.X, cloneRect.Y, cloneRect.Width,
+                            cloneRect.Height)){
+                                ImageSource = imageSource
+                            });
                 }
             }
         }

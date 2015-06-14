@@ -59,6 +59,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\ImageValidator.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="TileCanvas.cs" />
     <Compile Include="Models\TileMap.cs" />
